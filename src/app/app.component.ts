@@ -41,8 +41,6 @@ export class AppComponent implements OnInit {
 
   remoteParams: any = {}
 
-
-
   constructor(private timeService: TimeService, @Inject(DOCUMENT) private document: Document, private renderer: Renderer2) { }
 
   ngOnInit() {
@@ -102,28 +100,26 @@ export class AppComponent implements OnInit {
         this.renderer.appendChild(this.document.querySelector(".list-meet-item"), div);
 
         this.remoteParams[user.uid].videoTrack.play(user.uid);
-        this.remoteParams[user.uid].audioTrack.play();
       }
       if (mediaType == "audio") {
         this.remoteParams[user.uid] = {
-          audioTrack: user.videoTrack
+          audioTrack: user.audioTrack
         }
         this.remoteParams[user.uid].audioTrack.play();
       }
     });
 
     this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
-      debugger;
-      this.remoteParams[user.uid] = null;
+
     });
   }
 
   async join() {
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
-    // this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    // this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    // await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
-    // this.localParam.videoTrack.play("localCameraVideo");
+    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
+    this.localParam.videoTrack.play("localCameraVideo");
   }
 
   async leave() {
