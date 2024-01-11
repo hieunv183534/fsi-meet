@@ -112,7 +112,8 @@ export class AppComponent implements OnInit {
       }
     });
 
-    this.agoraEngine.on("user-unpublished", (user: any) => {
+    this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
+      debugger;
       this.remoteParams[user.uid] = null;
     });
   }
@@ -138,7 +139,9 @@ export class AppComponent implements OnInit {
     this.localParam.screenTrack.play("localScreenVideo");
   }
 
-  endShareScreen() {
+  async endShareScreen() {
     this.isScreenShare = false;
+    await this.agoraEngine.unpublish([this.localParam.screenTrack]);
+    this.localParam.screenTrack.close();
   }
 }
