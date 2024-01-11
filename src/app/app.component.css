@@ -1,0 +1,86 @@
+.meet {
+  width: calc(100vw - 16px);
+  height: calc(100vh - 16px);
+}
+
+.tool-meet {
+  height: 80px;
+}
+
+.tool-left h5 {
+  color: aliceblue;
+  font-size: 20px;
+}
+
+.meet-tab {
+  height: 100%;
+  background-color: aqua;
+  width: 100%;
+  transition: 0.5s;
+}
+
+.info-tab {
+  width: 0px;
+  height: 100%;
+  transition: 0.5s;
+}
+
+.show-info-tab {
+  width: 350px !important;
+}
+
+.show-info-tab1 {
+  width: calc(100% - 350px);
+}
+
+.member-tab {
+  background-color: blueviolet;
+}
+
+.chat-tab {
+  background-color: brown;
+}
+
+.meet-top {
+  background-color: chartreuse;
+  height: 130px;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.list-meet-item{
+  height: 100%;
+  display: flex;
+  width: auto;
+}
+
+.meet-item{
+  height: calc(100% - 8px);
+  width: 200px;
+  min-width: 200px;
+  background-color: blue;
+  margin-left: 4px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.meet-bottom {
+  background-color: cadetblue;
+}
+
+.pin-meet{
+  background-color: deeppink;
+}
+
+
+.my-meet{
+  width: 350px;
+}
+
+.my-video{
+  background-color: rgb(104, 236, 128);
+  height: 200px;
+}
+
+
+
