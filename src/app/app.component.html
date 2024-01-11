@@ -1,32 +1,28 @@
 <div class="meet flex flex-column gap-1">
   <div class="main-meet w-full flex-grow-1 flex gap-2">
-    <div
-      [ngClass]="{
+    <div [ngClass]="{
         'meet-tab flex flex-column gap-1': true,
         'show-info-tab1': isShowChat || isShowMember
-      }"
-    >
+      }">
       <div class="meet-top">
         <div class="list-meet-item">
         </div>
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
         <div class="pin-meet flex-grow-1"></div>
-        <div
-          class="my-meet flex flex-column justify-content-center gap-1"
-          *ngIf="!isShowChat && !isShowMember"
-        >
+        <div [ngClass]="{
+          'my-meet flex flex-column justify-content-center gap-1': true,
+          'd-none': isShowChat || isShowMember
+        }">
           <div class="my-video" id="localCameraVideo"></div>
-          <div class="my-video" id="localScreenVideo"></div>
+          <div class="my-screen" id="localScreenVideo"></div>
         </div>
       </div>
     </div>
-    <div
-      [ngClass]="{
+    <div [ngClass]="{
         'info-tab': true,
         'show-info-tab': isShowChat || isShowMember
-      }"
-    >
+      }">
       <div class="chat-tab w-full h-full" *ngIf="isShowChat"></div>
       <div class="member-tab w-full h-full" *ngIf="isShowMember"></div>
     </div>
@@ -36,106 +32,32 @@
       <h5>{{ currentTime }}</h5>
     </div>
     <div class="tool-mid flex align-items-center justify-content-between gap-3">
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-microphone"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="isMicroOn"
-        (click)="isMicroOn = false"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-microphone-slash"
-        class="p-button-rounded p-button-danger"
-        *ngIf="!isMicroOn"
-        (click)="isMicroOn = true"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-video"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="isVideoOn"
-        (click)="isVideoOn = false"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-video-slash"
-        class="p-button-rounded p-button-danger"
-        *ngIf="!isVideoOn"
-        (click)="isVideoOn = true"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-up-right-from-square"
-        class="p-button-rounded"
-        *ngIf="isScreenShare"
-        (click)="isScreenShare = false"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-up-right-from-square"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isScreenShare"
-        (click)="isScreenShare = true"
-      ></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-microphone" class="p-button-rounded p-button-secondary"
+        *ngIf="isMicroOn" (click)="isMicroOn = false"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-microphone-slash" class="p-button-rounded p-button-danger"
+        *ngIf="!isMicroOn" (click)="isMicroOn = true"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-video" class="p-button-rounded p-button-secondary"
+        *ngIf="isVideoOn" (click)="isVideoOn = false"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-video-slash" class="p-button-rounded p-button-danger"
+        *ngIf="!isVideoOn" (click)="isVideoOn = true"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square" class="p-button-rounded"
+        *ngIf="isScreenShare" (click)="isScreenShare = false"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square"
+        class="p-button-rounded p-button-secondary" *ngIf="!isScreenShare" (click)="isScreenShare = true"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-ellipsis-vertical"
+        class="p-button-rounded p-button-secondary"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-phone" class="p-button-rounded p-button-danger"></button>
     </div>
-    <div
-      class="tool-right flex align-items-center justify-content-end gap-3 pr-4"
-    >
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-users"
-        class="p-button-rounded"
-        *ngIf="isShowMember"
-        (click)="isShowMember = false"
-        pBadge
-        value="2"
-        severity="success"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-users"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isShowMember"
-        (click)="isShowMember = true; isShowChat = false"
-        pBadge
-        value="2"
-        severity="success"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-message"
-        class="p-button-rounded"
-        *ngIf="isShowChat"
-        (click)="isShowChat = false"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-message"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isShowChat"
-        (click)="isShowChat = true; isShowMember = false"
-      ></button>
+    <div class="tool-right flex align-items-center justify-content-end gap-3 pr-4">
+      <button pButton pRipple type="button" icon="fa-solid fa-users" class="p-button-rounded" *ngIf="isShowMember"
+        (click)="isShowMember = false" pBadge value="2" severity="success"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-users" class="p-button-rounded p-button-secondary"
+        *ngIf="!isShowMember" (click)="isShowMember = true; isShowChat = false" pBadge value="2"
+        severity="success"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-message" class="p-button-rounded" *ngIf="isShowChat"
+        (click)="isShowChat = false"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-message" class="p-button-rounded p-button-secondary"
+        *ngIf="!isShowChat" (click)="isShowChat = true; isShowMember = false"></button>
     </div>
   </div>
 </div>

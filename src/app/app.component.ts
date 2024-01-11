@@ -111,6 +111,10 @@ export class AppComponent implements OnInit {
         this.remoteParams[user.uid].audioTrack.play();
       }
     });
+
+    this.agoraEngine.on("user-unpublished", (user: any) => {
+      this.remoteParams[user.uid] = null;
+    });
   }
 
   async join() {
@@ -119,5 +123,11 @@ export class AppComponent implements OnInit {
     this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
     await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
     this.localParam.videoTrack.play("localCameraVideo");
+  }
+
+  async leave() {
+    this.localParam.audioTrack.close();
+    this.localParam.videoTrack.close();
+    await this.agoraEngine.leave();
   }
 }

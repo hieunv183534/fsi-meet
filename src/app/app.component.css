@@ -82,5 +82,6 @@
   height: 200px;
 }
 
-
-
+.d-none{
+  display: none !important;
+}
