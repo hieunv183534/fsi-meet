@@ -15,7 +15,7 @@
           'd-none': isShowChat || isShowMember
         }">
           <div class="my-video" id="localCameraVideo"></div>
-          <div class="my-screen" id="localScreenVideo"></div>
+          <div class="my-video" id="localScreenVideo"></div>
         </div>
       </div>
     </div>
@@ -41,9 +41,9 @@
       <button pButton pRipple type="button" icon="fa-solid fa-video-slash" class="p-button-rounded p-button-danger"
         *ngIf="!isVideoOn" (click)="isVideoOn = true"></button>
       <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square" class="p-button-rounded"
-        *ngIf="isScreenShare" (click)="isScreenShare = false"></button>
+        *ngIf="isScreenShare" (click)="endShareScreen()"></button>
       <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square"
-        class="p-button-rounded p-button-secondary" *ngIf="!isScreenShare" (click)="isScreenShare = true"></button>
+        class="p-button-rounded p-button-secondary" *ngIf="!isScreenShare" (click)="shareScreen()"></button>
       <button pButton pRipple type="button" icon="fa-solid fa-ellipsis-vertical"
         class="p-button-rounded p-button-secondary"></button>
       <button pButton pRipple type="button" icon="fa-solid fa-phone" class="p-button-rounded p-button-danger"></button>

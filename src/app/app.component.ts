@@ -33,9 +33,10 @@ export class AppComponent implements OnInit {
     uid: "",
   };
 
-  localParam: { audioTrack: any, videoTrack: any } = {
+  localParam: { audioTrack: any, videoTrack: any, screenTrack: any } = {
     audioTrack: "",
-    videoTrack: ""
+    videoTrack: "",
+    screenTrack: ""
   }
 
   remoteParams: any = {}
@@ -85,7 +86,7 @@ export class AppComponent implements OnInit {
   initRTC() {
     this.agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
-
+      debugger
       await this.agoraEngine.subscribe(user, mediaType);
 
       if (mediaType == "video") {
@@ -107,7 +108,6 @@ export class AppComponent implements OnInit {
         this.remoteParams[user.uid] = {
           audioTrack: user.videoTrack
         }
-
         this.remoteParams[user.uid].audioTrack.play();
       }
     });
@@ -129,5 +129,16 @@ export class AppComponent implements OnInit {
     this.localParam.audioTrack.close();
     this.localParam.videoTrack.close();
     await this.agoraEngine.leave();
+  }
+
+  async shareScreen() {
+    this.isScreenShare = true;
+    this.localParam.screenTrack = await AgoraRTC.createScreenVideoTrack({});
+    await this.agoraEngine.publish([this.localParam.screenTrack]);
+    this.localParam.screenTrack.play("localScreenVideo");
+  }
+
+  endShareScreen() {
+    this.isScreenShare = false;
   }
 }
