@@ -120,10 +120,10 @@ export class AppComponent implements OnInit {
 
   async join() {
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
-    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
-    this.localParam.videoTrack.play("localCameraVideo");
+    // this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+    // this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    // await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
+    // this.localParam.videoTrack.play("localCameraVideo");
   }
 
   async leave() {
