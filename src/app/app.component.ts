@@ -164,7 +164,7 @@ export class AppComponent implements OnInit {
   // audio
   async shareVoice() {
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({});
-    await this.agoraEngine1.publish([this.localParam.audioTrack]);
+    await this.agoraEngine.publish([this.localParam.audioTrack]);
     this.isMicroOn = true;
   }
   async endShareVoice() {
