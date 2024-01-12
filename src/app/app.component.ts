@@ -121,7 +121,9 @@ export class AppComponent implements OnInit {
     });
 
     this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
-
+      if(mediaType == "video"){
+        this.document.querySelector(`#${user.uid}`);
+      }
     });
   }
 
