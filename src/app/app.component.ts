@@ -25,12 +25,14 @@ export class AppComponent implements OnInit {
 
   currentTime: string = '';
   agoraEngine: any = null;
+  agoraEngine1: any = null;
 
   options: any = {
     appId: '48f5a9f8d4e644a6a1ca96376fdcf441',
     channel: '',
     token: '',
-    uid: "",
+    token1: '',
+    uid: ""
   };
 
   localParam: { audioTrack: any, videoTrack: any, screenTrack: any } = {
@@ -47,8 +49,6 @@ export class AppComponent implements OnInit {
     this.timeService.currentTime$.subscribe((time) => {
       this.currentTime = time;
     });
-    this.initRTC();
-
     const urlParams = new URLSearchParams(window.location.search);
     const authToken = urlParams.get('token');
     const chanel = urlParams.get('chanel');
@@ -68,8 +68,11 @@ export class AppComponent implements OnInit {
       }
     })
       .then(function (res) {
-        seft.options.token = res.data;
-        seft.join();
+        let token = res.data.split('_and_')[0];
+        let token1 = res.data.split('_and_')[1];
+        seft.options.token = token;
+        seft.options.token1 = token1;
+        seft.initAndJoinRTC();
       })
   }
 
@@ -81,12 +84,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  initRTC() {
+  async initAndJoinRTC() {
     this.agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
-    this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
-      debugger
-      await this.agoraEngine.subscribe(user, mediaType);
+    await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
+    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
+    this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
+    await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
+  }
+
+  listenRTC() {
+    this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
+      await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
 
         this.remoteParams[user.uid] = {
@@ -115,11 +124,6 @@ export class AppComponent implements OnInit {
   }
 
   async join() {
-    await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
-    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    await this.agoraEngine.publish([this.localParam.audioTrack, this.localParam.videoTrack]);
-    this.localParam.videoTrack.play("localCameraVideo");
   }
 
   async leave() {
@@ -128,16 +132,49 @@ export class AppComponent implements OnInit {
     await this.agoraEngine.leave();
   }
 
+  // screen
   async shareScreen() {
-    this.isScreenShare = true;
     this.localParam.screenTrack = await AgoraRTC.createScreenVideoTrack({});
-    await this.agoraEngine.publish([this.localParam.screenTrack]);
+    await this.agoraEngine1.publish([this.localParam.screenTrack]);
     this.localParam.screenTrack.play("localScreenVideo");
+    this.isScreenShare = true;
+  }
+  async endShareScreen() {
+    await this.agoraEngine1.unpublish([this.localParam.screenTrack]);
+    this.localParam.screenTrack.close();
+    this.isScreenShare = false;
   }
 
-  async endShareScreen() {
-    this.isScreenShare = false;
-    await this.agoraEngine.unpublish([this.localParam.screenTrack]);
+
+  // camera
+  async shareCamera() {
+    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    await this.agoraEngine.publish([this.localParam.videoTrack]);
+    this.localParam.videoTrack.play("localCameraVideo");
+    this.isVideoOn = true;
+  }
+  async endShareCamera() {
+    await this.agoraEngine.unpublish([this.localParam.videoTrack]);
+    this.localParam.videoTrack.close();
+    this.isVideoOn = false;
+  }
+
+  // audio
+  async shareVoice() {
+    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({});
+    await this.agoraEngine1.publish([this.localParam.audioTrack]);
+    this.isMicroOn = true;
+  }
+  async endShareVoice() {
+    await this.agoraEngine.unpublish([this.localParam.audioTrack]);
+    this.isMicroOn = false;
+  }
+
+
+  endCall(){
+    this.agoraEngine.leave();
+    this.agoraEngine1.leave();
     this.localParam.screenTrack.close();
+    this.localParam.videoTrack.close();
   }
 }
