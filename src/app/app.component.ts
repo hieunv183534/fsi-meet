@@ -91,6 +91,8 @@ export class AppComponent implements OnInit {
 
     this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
+
+    this.listenRTC();
   }
 
   listenRTC() {
