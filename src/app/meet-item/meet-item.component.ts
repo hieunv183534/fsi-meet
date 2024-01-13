@@ -22,8 +22,12 @@ export class MeetItemComponent implements OnInit, OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['videoTrack'].currentValue) {
+    if (changes['videoTrack']?.currentValue) {
       this.videoTrack.play(this.uid);
+    }
+
+    if (changes['audioTrack']?.currentValue) {
+      this.audioTrack.play();
     }
   }
 
