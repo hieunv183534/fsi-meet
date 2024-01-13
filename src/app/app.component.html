@@ -7,10 +7,14 @@
       }"
     >
       <div class="meet-top">
-        <div class="list-meet-item"></div>
+        <div class="list-meet-item">
+          <ng-container *ngFor="let param of remoteParams">
+            <app-meet-item [uid]="param.uid" [isSceenShare]="param.isScreenShare" [audioTrack]="param.audioTrack" [videoTrack]="param.videoTrack"></app-meet-item>
+          </ng-container>
+        </div>
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
-        <div class="pin-meet flex-grow-1"></div>
+        <div class="pin-meet flex-grow-1" id="pinMeet"></div>
         <div
           [ngClass]="{
             'my-meet flex flex-column justify-content-center gap-1': true,
@@ -104,6 +108,7 @@
         type="button"
         icon="fa-solid fa-phone"
         class="p-button-rounded p-button-danger"
+        (click)="endCall()"
       ></button>
     </div>
     <div

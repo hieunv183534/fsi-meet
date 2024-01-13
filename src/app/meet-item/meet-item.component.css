@@ -1,0 +1,31 @@
+.no-video {
+  background-color: #3C4043;
+}
+
+.video {
+  background-color: blue;
+}
+
+.meet-item-content {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meet-item-tool {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #00000077;
+  border-radius: 30px;
+  color: #fff;
+  display: none;
+}
+
+
+.meet-item-content:hover .meet-item-tool {
+  display: flex;
+}
+
+.d-none{
+  display: none !important;
+}

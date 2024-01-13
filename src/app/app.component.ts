@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, ComponentFactoryResolver, Inject, Injector, OnInit, Renderer2 } from '@angular/core';
 import { TimeService } from './time.service';
 import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
 import AgoraRTC from "agora-rtc-sdk-ng";
 import jwt_decode from 'jwt-decode';
 import { DOCUMENT } from '@angular/common';
+import { MeetItemComponent } from './meet-item/meet-item.component';
+
 
 @Component({
   selector: 'app-root',
@@ -41,9 +43,17 @@ export class AppComponent implements OnInit {
     screenTrack: ""
   }
 
-  remoteParams: any = {}
+  remoteParams: {
+    uid: any,
+    videoTrack?: any,
+    audioTrack?: any,
+    isScreenShare: boolean
+  }[] = [];
 
-  constructor(private timeService: TimeService, @Inject(DOCUMENT) private document: Document, private renderer: Renderer2) { }
+  constructor(private timeService: TimeService,
+    @Inject(DOCUMENT) private document: Document,
+    private renderer: Renderer2) {
+  }
 
   ngOnInit() {
     this.timeService.currentTime$.subscribe((time) => {
@@ -55,10 +65,21 @@ export class AppComponent implements OnInit {
     this.decodedAccessToken(authToken);
     this.options.channel = chanel;
     this.getRTCToken(authToken, chanel);
+    this.getUsersInConversation(authToken, chanel);
+  }
+
+  getUsersInConversation(authToken: any, chanel: any) {
+    axios.get("https://fsiconnected.cloud/api/fsi/chat/users-by-conversation/" + chanel, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + authToken,
+      }
+    }).then(res => {
+      localStorage.setItem("users", JSON.stringify(res.data.map((x: any) => x.user)));
+    })
   }
 
   getRTCToken(authToken: any, chanel: any) {
-    var seft = this;
     axios.post('https://fsiconnected.cloud/api/fsi/agora/rtc-token', {
       channelName: chanel
     }, {
@@ -67,12 +88,12 @@ export class AppComponent implements OnInit {
         Authorization: "Bearer " + authToken,
       }
     })
-      .then(function (res) {
+      .then((res) => {
         let token = res.data.split('_and_')[0];
         let token1 = res.data.split('_and_')[1];
-        seft.options.token = token;
-        seft.options.token1 = token1;
-        seft.initAndJoinRTC();
+        this.options.token = token;
+        this.options.token1 = token1;
+        this.initAndJoinRTC();
       })
   }
 
@@ -96,39 +117,51 @@ export class AppComponent implements OnInit {
   }
 
   listenRTC() {
+    this.agoraEngine.on('user-joined', (user: any) => {
+      if (!user.uid.includes("screen")) {
+        this.remoteParams.push({
+          uid: user.uid,
+          isScreenShare: false
+        })
+      } else {
+
+      }
+    });
+
+    this.agoraEngine.on('user-left', (user: any) => {
+      if (!user.uid.includes("screen")) {
+        this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+      } else {
+
+      }
+    });
+
+
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
+        if (user.uid.includes("screen")) {
 
-        this.remoteParams[user.uid] = {
-          videoTrack: user.videoTrack,
-          audioTrack: user.audioTrack
+        } else {
+          let userParam = this.remoteParams.find(x => x.uid == user.uid);
+          userParam!.videoTrack = user.videoTrack;
         }
-
-        let div = this.renderer.createElement("div");
-        this.renderer.setProperty(div, "id", user.uid);
-        this.renderer.addClass(div, "meet-item");
-        this.renderer.appendChild(this.document.querySelector(".list-meet-item"), div);
-
-        this.remoteParams[user.uid].videoTrack.play(user.uid);
       }
       if (mediaType == "audio") {
-        this.remoteParams[user.uid] = {
-          audioTrack: user.audioTrack
-        }
-        this.remoteParams[user.uid].audioTrack.play();
+        let param = this.remoteParams.find(x => x.uid == user.uid);
+        param!.audioTrack = user.audioTrack;
       }
     });
 
     this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
-      debugger
+      let param = this.remoteParams.find(x=> x.uid == user.uid);
       if (mediaType == "video") {
-        this.document.getElementById(user.uid)?.remove();
+        param!.videoTrack = null;
+      } else {
+        let param = this.remoteParams.find(x=> x.uid == user.uid);
+        param!.audioTrack = null;
       }
     });
-  }
-
-  async join() {
   }
 
   async leave() {
@@ -177,9 +210,6 @@ export class AppComponent implements OnInit {
 
 
   endCall() {
-    this.agoraEngine.leave();
-    this.agoraEngine1.leave();
-    this.localParam.screenTrack.close();
-    this.localParam.videoTrack.close();
+    window.location.reload();
   }
 }

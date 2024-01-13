@@ -7,10 +7,16 @@ import { ButtonModule } from 'primeng/button';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { TimeService } from './time.service';
 import { BadgeModule } from 'primeng/badge';
+import { MeetItemComponent } from './meet-item/meet-item.component';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MeetItemComponent
   ],
   imports: [
     BrowserModule,
@@ -18,7 +24,11 @@ import { BadgeModule } from 'primeng/badge';
     CardModule,
     ButtonModule,
     ToggleButtonModule,
-    BadgeModule
+    BadgeModule,
+    AvatarModule,
+    AvatarGroupModule,
+    OverlayPanelModule,
+    FormsModule
   ],
   providers: [TimeService],
   bootstrap: [AppComponent]
