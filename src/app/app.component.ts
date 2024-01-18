@@ -111,15 +111,20 @@ export class AppComponent implements OnInit {
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
 
-    this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
-    await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
+    // this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
+    // await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
 
     this.listenRTC();
   }
 
   listenRTC() {
+
+    this.agoraEngine.on('published-user-list', (users: any) => {
+      debugger;
+    });
+
     this.agoraEngine.on('user-joined', (user: any,elapsed: any) => {
-      alert(user.uid);
+      console.log("hieunv183534 "+ user.uid);
       // if (!user.uid.includes("screen")) {
       //   this.remoteParams.push({
       //     uid: user.uid,
@@ -140,7 +145,6 @@ export class AppComponent implements OnInit {
 
 
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
-      debugger;
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
