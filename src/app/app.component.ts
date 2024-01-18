@@ -123,8 +123,7 @@ export class AppComponent implements OnInit {
       debugger;
     });
 
-    this.agoraEngine.on('user-joined', (user: any,elapsed: any) => {
-      console.log("hieunv183534 "+ user.uid);
+    this.agoraEngine.on('user-joined', (user: any, elapsed: any) => {
       // if (!user.uid.includes("screen")) {
       //   this.remoteParams.push({
       //     uid: user.uid,
@@ -133,6 +132,14 @@ export class AppComponent implements OnInit {
       // } else {
 
       // }
+      if (!user.uid.includes("screen")) {
+        let rmU =  JSON.parse(localStorage.getItem("users") || "[]").find((x: any)=> x.id == user.uid);
+        console.log("hieunv183534 " + rmU.name);
+
+      } else {
+        let rmU =  JSON.parse(localStorage.getItem("users") || "[]").find((x: any)=> x.id == user.uid.replace("screen",""));
+        console.log("hieunv183534 " + rmU.name + "   ----------");
+      }
     });
 
     this.agoraEngine.on('user-left', (user: any) => {
@@ -161,11 +168,11 @@ export class AppComponent implements OnInit {
     });
 
     this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
-      let param = this.remoteParams.find(x=> x.uid == user.uid);
+      let param = this.remoteParams.find(x => x.uid == user.uid);
       if (mediaType == "video") {
         param!.videoTrack = null;
       } else {
-        let param = this.remoteParams.find(x=> x.uid == user.uid);
+        let param = this.remoteParams.find(x => x.uid == user.uid);
         param!.audioTrack = null;
       }
     });
