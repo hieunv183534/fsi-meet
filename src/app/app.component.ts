@@ -110,6 +110,7 @@ export class AppComponent implements OnInit {
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
+
     this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
 
@@ -117,15 +118,16 @@ export class AppComponent implements OnInit {
   }
 
   listenRTC() {
-    this.agoraEngine.on('user-joined', (user: any) => {
-      if (!user.uid.includes("screen")) {
-        this.remoteParams.push({
-          uid: user.uid,
-          isScreenShare: false
-        })
-      } else {
+    this.agoraEngine.on('user-joined', (user: any,elapsed: any) => {
+      alert(user.uid);
+      // if (!user.uid.includes("screen")) {
+      //   this.remoteParams.push({
+      //     uid: user.uid,
+      //     isScreenShare: false
+      //   })
+      // } else {
 
-      }
+      // }
     });
 
     this.agoraEngine.on('user-left', (user: any) => {
@@ -138,6 +140,7 @@ export class AppComponent implements OnInit {
 
 
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
+      debugger;
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
