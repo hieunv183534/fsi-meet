@@ -9,7 +9,12 @@
       <div class="meet-top">
         <div class="list-meet-item">
           <ng-container *ngFor="let param of remoteParams">
-            <app-meet-item [uid]="param.uid" [isSceenShare]="param.isScreenShare" [audioTrack]="param.audioTrack" [videoTrack]="param.videoTrack"></app-meet-item>
+            <app-meet-item
+              [uid]="param.uid"
+              [isSceenShare]="param.isScreenShare"
+              [audioTrack]="param.audioTrack"
+              [videoTrack]="param.videoTrack"
+            ></app-meet-item>
           </ng-container>
         </div>
       </div>
@@ -77,7 +82,7 @@
         *ngIf="!isVideoOn"
         (click)="shareCamera()"
       ></button>
-      <button
+      <!-- <button
         pButton
         pRipple
         type="button"
@@ -94,7 +99,7 @@
         class="p-button-rounded p-button-secondary"
         *ngIf="!isScreenShare"
         (click)="shareScreen()"
-      ></button>
+      ></button> -->
       <button
         pButton
         pRipple
