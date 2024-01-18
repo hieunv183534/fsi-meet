@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
   currentTime: string = '';
   agoraEngine: any = null;
-  agoraEngine1: any = null;
+  // agoraEngine1: any = null;
 
   options: any = {
     appId: '48f5a9f8d4e644a6a1ca96376fdcf441',
@@ -111,8 +111,8 @@ export class AppComponent implements OnInit {
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
 
-    this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
-    await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
+    // this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
+    // await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
 
     this.listenRTC();
   }
@@ -188,15 +188,15 @@ export class AppComponent implements OnInit {
 
   // screen
   async shareScreen() {
-    this.localParam.screenTrack = await AgoraRTC.createScreenVideoTrack({});
-    await this.agoraEngine1.publish([this.localParam.screenTrack]);
-    this.localParam.screenTrack.play("localScreenVideo");
-    this.isScreenShare = true;
+    // this.localParam.screenTrack = await AgoraRTC.createScreenVideoTrack({});
+    // await this.agoraEngine1.publish([this.localParam.screenTrack]);
+    // this.localParam.screenTrack.play("localScreenVideo");
+    // this.isScreenShare = true;
   }
   async endShareScreen() {
-    await this.agoraEngine1.unpublish([this.localParam.screenTrack]);
-    this.localParam.screenTrack.close();
-    this.isScreenShare = false;
+    // await this.agoraEngine1.unpublish([this.localParam.screenTrack]);
+    // this.localParam.screenTrack.close();
+    // this.isScreenShare = false;
   }
 
 
