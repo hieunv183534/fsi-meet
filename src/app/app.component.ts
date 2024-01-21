@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
   }
 
   getUsersInConversation(authToken: any, chanel: any) {
-    axios.get("https://fsiconnected.cloud/api/fsi/chat/users-by-conversation/" + chanel, {
+    axios.get("https://fsiconnectedapi.azurewebsites.net/api/fsi/chat/users-by-conversation/" + chanel, {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + authToken,
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
   }
 
   getRTCToken(authToken: any, chanel: any) {
-    axios.post('https://fsiconnected.cloud/api/fsi/agora/rtc-token', {
+    axios.post('https://fsiconnectedapi.azurewebsites.net/api/fsi/agora/rtc-token', {
       channelName: chanel
     }, {
       headers: {
@@ -134,11 +134,11 @@ export class AppComponent implements OnInit {
       }
       /////////////
       if (!user.uid.includes("screen")) {
-        let rmU =  JSON.parse(localStorage.getItem("users") || "[]").find((x: any)=> x.id == user.uid);
+        let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid);
         console.log("hieunv183534 " + rmU.name);
 
       } else {
-        let rmU =  JSON.parse(localStorage.getItem("users") || "[]").find((x: any)=> x.id == user.uid.replace("screen",""));
+        let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid.replace("screen", ""));
         console.log("hieunv183534 " + rmU.name + "   ----------");
       }
       /////////////
