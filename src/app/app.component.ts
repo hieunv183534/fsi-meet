@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     isScreenShare: boolean
   }[] = [];
 
-  connection?: signalR.HubConnection;
+  connection!: signalR.HubConnection;
 
   constructor(private timeService: TimeService,
     @Inject(DOCUMENT) private document: Document,
@@ -102,7 +102,7 @@ export class AppComponent implements OnInit {
 
   initSignalR(token: string, group: string) {
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://fsiconnectedapi.azurewebsites.net/chat", {
+      .withUrl("https://fsiconnectedapi.azurewebsites.net/meet", {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
@@ -111,11 +111,7 @@ export class AppComponent implements OnInit {
       .build();
 
     this.connection.start().then(async () => {
-      console.log('SignalR Connected!');
-      this.initAndJoinRTC();
-
       await this.connection?.invoke("JoinMeet", group);
-
     }).catch((err: any) => {
       return console.error(err.toString());
     });
@@ -124,7 +120,45 @@ export class AppComponent implements OnInit {
   }
 
   listenSignalR() {
+    this.connection.on("OnJoinFailed", (msg: string) => {
+      debugger
+      alert(msg);
+    });
 
+    this.connection.on("OnJoinSuccess", () => {
+      debugger
+      this.initAndJoinRTC();
+    });
+
+    this.connection.on("OnJoined", async (userId: string) => {
+
+
+      if (userId != this.thisUser.nameid) {
+        this.remoteParams.push({
+          uid: userId,
+          isScreenShare: false
+        })
+        if (this.isMicroOn) {
+          await this.agoraEngine.unpublish([this.localParam.audioTrack]);
+          await this.agoraEngine.publish([this.localParam.audioTrack]);
+        }
+        if (this.isVideoOn) {
+          await this.agoraEngine.unpublish([this.localParam.videoTrack]);
+          await this.agoraEngine.publish([this.localParam.videoTrack]);
+        }
+        if (this.isScreenShare) {
+
+        }
+      }
+    });
+
+    this.connection.on("OnPublish", (userId: string, track: string) => {
+      debugger
+    });
+
+    this.connection.on("OnUnPublish", (userId: string, track: string) => {
+      debugger
+    });
   }
 
   async initAndJoinRTC() {
@@ -144,26 +178,26 @@ export class AppComponent implements OnInit {
       debugger;
     });
 
-    this.agoraEngine.on('user-joined', (user: any, elapsed: any) => {
-      if (!user.uid.includes("screen")) {
-        this.remoteParams.push({
-          uid: user.uid,
-          isScreenShare: false
-        })
-      } else {
+    // this.agoraEngine.on('user-joined', (user: any, elapsed: any) => {
+    //   if (!user.uid.includes("screen")) {
+    //     this.remoteParams.push({
+    //       uid: user.uid,
+    //       isScreenShare: false
+    //     })
+    //   } else {
 
-      }
-      /////////////
-      if (!user.uid.includes("screen")) {
-        let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid);
-        console.log("hieunv183534 " + rmU.name);
+    //   }
+    //   /////////////
+    //   if (!user.uid.includes("screen")) {
+    //     let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid);
+    //     console.log("hieunv183534 " + rmU.name);
 
-      } else {
-        let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid.replace("screen", ""));
-        console.log("hieunv183534 " + rmU.name + "   ----------");
-      }
-      /////////////
-    });
+    //   } else {
+    //     let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid.replace("screen", ""));
+    //     console.log("hieunv183534 " + rmU.name + "   ----------");
+    //   }
+    //   /////////////
+    // });
 
     this.agoraEngine.on('user-left', (user: any) => {
       if (!user.uid.includes("screen")) {
@@ -220,7 +254,6 @@ export class AppComponent implements OnInit {
     this.isScreenShare = false;
   }
 
-
   // camera
   async shareCamera() {
     this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
@@ -244,7 +277,6 @@ export class AppComponent implements OnInit {
     await this.agoraEngine.unpublish([this.localParam.audioTrack]);
     this.isMicroOn = false;
   }
-
 
   endCall() {
     window.location.reload();
