@@ -125,8 +125,13 @@ export class AppComponent implements OnInit {
       alert(msg);
     });
 
-    this.connection.on("OnJoinSuccess", () => {
-      debugger
+    this.connection.on("OnJoinSuccess", (users) => {
+      users.forEach((userId: string) => {
+        this.remoteParams.push({
+          uid: userId,
+          isScreenShare: false
+        })
+      });
       this.initAndJoinRTC();
     });
 
