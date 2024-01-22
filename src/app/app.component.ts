@@ -6,6 +6,7 @@ import AgoraRTC from "agora-rtc-sdk-ng";
 import jwt_decode from 'jwt-decode';
 import { DOCUMENT } from '@angular/common';
 import { MeetItemComponent } from './meet-item/meet-item.component';
+import * as signalR from '@microsoft/signalr';
 
 
 @Component({
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit {
     isScreenShare: boolean
   }[] = [];
 
+  connection?: signalR.HubConnection;
+
   constructor(private timeService: TimeService,
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2) {
@@ -93,25 +96,39 @@ export class AppComponent implements OnInit {
         let token1 = res.data.split('_and_')[1];
         this.options.token = token;
         this.options.token1 = token1;
-        this.initAndJoinRTC();
+        this.initSignalR(authToken, chanel);
       })
   }
 
-  decodedAccessToken(authToken: any): any {
-    try {
-      this.thisUser = jwt_decode(authToken);
-      this.options.uid = this.thisUser.nameid
-    } catch (Error) {
-    }
+  initSignalR(token: string, group: string) {
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://fsiconnectedapi.azurewebsites.net/chat", {
+        accessTokenFactory: () => token,
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets
+      })
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+
+    this.connection.start().then(async () => {
+      console.log('SignalR Connected!');
+      this.initAndJoinRTC();
+
+      await this.connection?.invoke("JoinMeet", group);
+
+    }).catch((err: any) => {
+      return console.error(err.toString());
+    });
+
+    this.listenSignalR();
+  }
+
+  listenSignalR() {
+
   }
 
   async initAndJoinRTC() {
-
-
     this.agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
-
-    this.agoraEngine.leave();
-
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
@@ -123,7 +140,6 @@ export class AppComponent implements OnInit {
   }
 
   listenRTC() {
-
     this.agoraEngine.on('published-user-list', (users: any) => {
       debugger;
     });
@@ -232,5 +248,13 @@ export class AppComponent implements OnInit {
 
   endCall() {
     window.location.reload();
+  }
+
+  decodedAccessToken(authToken: any): any {
+    try {
+      this.thisUser = jwt_decode(authToken);
+      this.options.uid = this.thisUser.nameid
+    } catch (Error) {
+    }
   }
 }
