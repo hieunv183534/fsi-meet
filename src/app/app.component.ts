@@ -137,12 +137,16 @@ export class AppComponent implements OnInit {
 
     this.connection.on("OnJoined", async (userId: string) => {
 
-
       if (userId != this.thisUser.nameid) {
-        this.remoteParams.push({
-          uid: userId,
-          isScreenShare: false
-        })
+        debugger;
+        let remote = this.remoteParams.find(x => x.uid == userId);
+        if (!remote) {
+          this.remoteParams.push({
+            uid: userId,
+            isScreenShare: false
+          });
+        }
+
         if (this.isMicroOn) {
           await this.agoraEngine.unpublish([this.localParam.audioTrack]);
           await this.agoraEngine.publish([this.localParam.audioTrack]);
@@ -179,9 +183,6 @@ export class AppComponent implements OnInit {
   }
 
   listenRTC() {
-    this.agoraEngine.on('published-user-list', (users: any) => {
-      debugger;
-    });
 
     // this.agoraEngine.on('user-joined', (user: any, elapsed: any) => {
     //   if (!user.uid.includes("screen")) {
