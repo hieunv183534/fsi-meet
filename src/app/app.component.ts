@@ -126,11 +126,14 @@ export class AppComponent implements OnInit {
     });
 
     this.connection.on("OnJoinSuccess", (users) => {
-      users.forEach((userId: string) => {
-        this.remoteParams.push({
+      users.forEach(async (userId: string) => {
+        let user = {
           uid: userId,
           isScreenShare: false
-        })
+        };
+        this.remoteParams.push(user);
+        // await this.agoraEngine.subscribe(user, "video");
+        // await this.agoraEngine.subscribe(user, "audio");
       });
       this.initAndJoinRTC();
     });
@@ -147,17 +150,19 @@ export class AppComponent implements OnInit {
           });
         }
 
-        if (this.isMicroOn) {
-          await this.agoraEngine.unpublish([this.localParam.audioTrack]);
-          await this.agoraEngine.publish([this.localParam.audioTrack]);
-        }
-        if (this.isVideoOn) {
-          await this.agoraEngine.unpublish([this.localParam.videoTrack]);
-          await this.agoraEngine.publish([this.localParam.videoTrack]);
-        }
-        if (this.isScreenShare) {
+        setTimeout(async () => {
+          if (this.isMicroOn) {
+            await this.agoraEngine.unpublish([this.localParam.audioTrack]);
+            await this.agoraEngine.publish([this.localParam.audioTrack]);
+          }
+          if (this.isVideoOn) {
+            await this.agoraEngine.unpublish([this.localParam.videoTrack]);
+            await this.agoraEngine.publish([this.localParam.videoTrack]);
+          }
+          if (this.isScreenShare) {
 
-        }
+          }
+        }, 5000);
       }
     });
 
@@ -175,6 +180,21 @@ export class AppComponent implements OnInit {
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
+    // console.log("hieunv");
+
+    // console.log(this.agoraEngine._users);
+    // this.agoraEngine._users.forEach((user: any) => {
+    //   if (!user.uid.includes("screen")) {
+    //     this.remoteParams.push({
+    //       uid: user.uid,
+    //       isScreenShare: false
+    //     });
+
+    //     console.log(user);
+    //   }
+    // });
+
+    // debugger;
 
     this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
@@ -215,6 +235,7 @@ export class AppComponent implements OnInit {
 
 
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
+      debugger
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
