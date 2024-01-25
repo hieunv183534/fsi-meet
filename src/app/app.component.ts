@@ -96,105 +96,15 @@ export class AppComponent implements OnInit {
         let token1 = res.data.split('_and_')[1];
         this.options.token = token;
         this.options.token1 = token1;
-        this.initSignalR(authToken, chanel);
+        this.initAndJoinRTC();
       })
   }
 
-  initSignalR(token: string, group: string) {
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://fsiconnectedapi.azurewebsites.net/meet", {
-        accessTokenFactory: () => token,
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-
-    this.connection.start().then(async () => {
-      await this.connection?.invoke("JoinMeet", group);
-    }).catch((err: any) => {
-      return console.error(err.toString());
-    });
-
-    this.listenSignalR();
-  }
-
-  listenSignalR() {
-    this.connection.on("OnJoinFailed", (msg: string) => {
-      debugger
-      alert(msg);
-    });
-
-    this.connection.on("OnJoinSuccess", (users) => {
-      users.forEach(async (userId: string) => {
-        let user = {
-          uid: userId,
-          isScreenShare: false
-        };
-        this.remoteParams.push(user);
-        // await this.agoraEngine.subscribe(user, "video");
-        // await this.agoraEngine.subscribe(user, "audio");
-      });
-      this.initAndJoinRTC();
-    });
-
-    this.connection.on("OnJoined", async (userId: string) => {
-
-      if (userId != this.thisUser.nameid) {
-        debugger;
-        let remote = this.remoteParams.find(x => x.uid == userId);
-        if (!remote) {
-          this.remoteParams.push({
-            uid: userId,
-            isScreenShare: false
-          });
-        }
-
-        setTimeout(async () => {
-          if (this.isMicroOn) {
-            await this.agoraEngine.unpublish([this.localParam.audioTrack]);
-            await this.agoraEngine.publish([this.localParam.audioTrack]);
-          }
-          if (this.isVideoOn) {
-            await this.agoraEngine.unpublish([this.localParam.videoTrack]);
-            await this.agoraEngine.publish([this.localParam.videoTrack]);
-          }
-          if (this.isScreenShare) {
-
-          }
-        }, 5000);
-      }
-    });
-
-    this.connection.on("OnPublish", (userId: string, track: string) => {
-      debugger
-    });
-
-    this.connection.on("OnUnPublish", (userId: string, track: string) => {
-      debugger
-    });
-  }
 
   async initAndJoinRTC() {
     this.agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
     this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-
-    // console.log("hieunv");
-
-    // console.log(this.agoraEngine._users);
-    // this.agoraEngine._users.forEach((user: any) => {
-    //   if (!user.uid.includes("screen")) {
-    //     this.remoteParams.push({
-    //       uid: user.uid,
-    //       isScreenShare: false
-    //     });
-
-    //     console.log(user);
-    //   }
-    // });
-
-    // debugger;
 
     this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
@@ -204,38 +114,24 @@ export class AppComponent implements OnInit {
 
   listenRTC() {
 
-    // this.agoraEngine.on('user-joined', (user: any, elapsed: any) => {
-    //   if (!user.uid.includes("screen")) {
-    //     this.remoteParams.push({
-    //       uid: user.uid,
-    //       isScreenShare: false
-    //     })
-    //   } else {
-
-    //   }
-    //   /////////////
-    //   if (!user.uid.includes("screen")) {
-    //     let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid);
-    //     console.log("hieunv183534 " + rmU.name);
-
-    //   } else {
-    //     let rmU = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == user.uid.replace("screen", ""));
-    //     console.log("hieunv183534 " + rmU.name + "   ----------");
-    //   }
-    //   /////////////
-    // });
+    this.agoraEngine.on('user-joined', (user: any) => {
+      if (!user.uid.includes("screen")) {
+        let oldUser = this.remoteParams.find(x => x.uid == user.uid);
+        if (!oldUser) {
+          this.remoteParams.push({
+            uid: user.uid,
+            isScreenShare: false
+          });
+        }
+      }
+    });
 
     this.agoraEngine.on('user-left', (user: any) => {
-      if (!user.uid.includes("screen")) {
-        this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
-      } else {
 
-      }
     });
 
 
     this.agoraEngine.on("user-published", async (user: any, mediaType: any) => {
-      debugger
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
@@ -260,6 +156,36 @@ export class AppComponent implements OnInit {
         param!.audioTrack = null;
       }
     });
+
+
+    setTimeout(() => {
+      let remoteUsers = this.agoraEngine.remoteUsers;
+      remoteUsers.forEach(async (remoteUser: any) => {
+        if (!remoteUser.uid.includes(this.thisUser.nameid)) {
+          console.log("hieunv183534 " + remoteUser.uid);
+          if (remoteUser.uid.includes("screen")) {
+            if (remoteUser.hasVideo) {
+
+            }
+          } else {
+            this.remoteParams.push({
+              isScreenShare: false,
+              uid: remoteUser.uid
+            });
+
+            if (remoteUser.hasVideo) {
+              await this.agoraEngine.subscribe(remoteUser, "video");
+              this.remoteParams.find(x => x.uid == remoteUser.uid)!.videoTrack = remoteUser.videoTrack;
+            }
+
+            if (remoteUser.hasVideo) {
+              await this.agoraEngine.subscribe(remoteUser, "audio");
+              this.remoteParams.find(x => x.uid == remoteUser.uid)!.audioTrack = remoteUser.audioTrack;
+            }
+          }
+        }
+      });
+    }, 4000);
   }
 
   async leave() {
