@@ -135,17 +135,18 @@ export class AppComponent implements OnInit {
       await this.agoraEngine.subscribe(user, mediaType);
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
-
-          var oldScreen = this.remoteParams.find(x => x.uid == user.uid);
-          if (!oldScreen) {
-            this.remoteParams.push({
-              uid: user.uid,
-              isScreenShare: true
-            });
+          if (!user.uid.includes(this.thisUser.nameid)) {
+            var oldScreen = this.remoteParams.find(x => x.uid == user.uid);
+            if (!oldScreen) {
+              this.remoteParams.push({
+                uid: user.uid,
+                isScreenShare: true
+              });
+            }
+            setTimeout(() => {
+              this.remoteParams.find(x => x.uid == user.uid)!.videoTrack = user.videoTrack;
+            }, 1000);
           }
-          setTimeout(() => {
-            this.remoteParams.find(x => x.uid == user.uid)!.videoTrack = user.videoTrack;
-          }, 1000);
         } else {
           let userParam = this.remoteParams.find(x => x.uid == user.uid);
           userParam!.videoTrack = user.videoTrack;
