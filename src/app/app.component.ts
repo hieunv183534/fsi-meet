@@ -127,7 +127,7 @@ export class AppComponent implements OnInit {
     });
 
     this.agoraEngine.on('user-left', (user: any) => {
-
+      this.remoteParams = this.remoteParams.filter(x=> x.uid != user.uid);
     });
 
 
