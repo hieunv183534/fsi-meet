@@ -32,7 +32,12 @@ export class MeetItemComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any)=> x.id == this.uid);
+    if (this.isSceenShare) {
+      let userId = this.uid.replace("screen", "");
+      this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == userId);
+    } else {
+      this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == this.uid);
+    }
   }
 
 }

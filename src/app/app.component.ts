@@ -127,7 +127,7 @@ export class AppComponent implements OnInit {
     });
 
     this.agoraEngine.on('user-left', (user: any) => {
-      this.remoteParams = this.remoteParams.filter(x=> x.uid != user.uid);
+      this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
     });
 
 
@@ -136,12 +136,23 @@ export class AppComponent implements OnInit {
       if (mediaType == "video") {
         if (user.uid.includes("screen")) {
 
+          var oldScreen = this.remoteParams.find(x => x.uid == user.uid);
+          if (!oldScreen) {
+            this.remoteParams.push({
+              uid: user.uid,
+              isScreenShare: true
+            });
+          }
+          setTimeout(() => {
+            this.remoteParams.find(x => x.uid == user.uid)!.videoTrack = user.videoTrack;
+          }, 1000);
         } else {
           let userParam = this.remoteParams.find(x => x.uid == user.uid);
           userParam!.videoTrack = user.videoTrack;
         }
       }
       if (mediaType == "audio") {
+        debugger;
         let param = this.remoteParams.find(x => x.uid == user.uid);
         param!.audioTrack = user.audioTrack;
       }
@@ -150,7 +161,11 @@ export class AppComponent implements OnInit {
     this.agoraEngine.on("user-unpublished", (user: any, mediaType: any) => {
       let param = this.remoteParams.find(x => x.uid == user.uid);
       if (mediaType == "video") {
-        param!.videoTrack = null;
+        if (user.uid.includes('screen')) {
+          this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+        } else {
+          param!.videoTrack = null;
+        }
       } else {
         let param = this.remoteParams.find(x => x.uid == user.uid);
         param!.audioTrack = null;
@@ -165,20 +180,32 @@ export class AppComponent implements OnInit {
           console.log("hieunv183534 " + remoteUser.uid);
           if (remoteUser.uid.includes("screen")) {
             if (remoteUser.hasVideo) {
+              let oldRemoteUser = this.remoteParams.find(x => x.uid == remoteUser.uid);
+              if (!oldRemoteUser) {
+                this.remoteParams.push({
+                  isScreenShare: true,
+                  uid: remoteUser.uid
+                });
+              }
 
+              await this.agoraEngine.subscribe(remoteUser, "video");
+              this.remoteParams.find(x => x.uid == remoteUser.uid)!.videoTrack = remoteUser.videoTrack;
             }
           } else {
-            this.remoteParams.push({
-              isScreenShare: false,
-              uid: remoteUser.uid
-            });
+            let oldRemoteUser = this.remoteParams.find(x => x.uid == remoteUser.uid);
+            if (!oldRemoteUser) {
+              this.remoteParams.push({
+                isScreenShare: false,
+                uid: remoteUser.uid
+              });
+            }
 
             if (remoteUser.hasVideo) {
               await this.agoraEngine.subscribe(remoteUser, "video");
               this.remoteParams.find(x => x.uid == remoteUser.uid)!.videoTrack = remoteUser.videoTrack;
             }
 
-            if (remoteUser.hasVideo) {
+            if (remoteUser.hasAudio) {
               await this.agoraEngine.subscribe(remoteUser, "audio");
               this.remoteParams.find(x => x.uid == remoteUser.uid)!.audioTrack = remoteUser.audioTrack;
             }
