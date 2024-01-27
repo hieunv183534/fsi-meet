@@ -99,3 +99,7 @@
   display: flex;
 }
 
+.no-video {
+  background-color: #3C4043;
+}
+

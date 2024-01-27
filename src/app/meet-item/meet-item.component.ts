@@ -45,7 +45,7 @@ export class MeetItemComponent implements OnInit, OnChanges {
   }
 
   pinUser() {
-    this.pin.emit({ uid: this.uid, userName: this.userInfo.name });
+    this.pin.emit({ uid: this.uid, userName: this.userInfo.name, avatarUrl: this.userInfo.avatarUrl });
   }
 
 }

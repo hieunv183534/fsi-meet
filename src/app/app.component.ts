@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
   agoraEngine1: any = null;
 
   pinUserName?: string;
+  pinAvararUrl?: string;
 
 
   options: any = {
@@ -273,8 +274,9 @@ export class AppComponent implements OnInit {
     window.location.reload();
   }
 
-  pin(pin: { uid: string, userName: string }) {
+  pin(pin: { uid: string, userName: string, avatarUrl: string }) {
     this.pinUserName = pin.userName;
+    this.pinAvararUrl = pin.avatarUrl;
     if (this.pinParam?.uid) {
       this.remoteParams.push(this.pinParam);
     }

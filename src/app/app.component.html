@@ -21,6 +21,20 @@
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
         <div class="pin-meet flex-grow-1 relative">
+          <div
+            [ngClass]="{
+              'no-video w-full h-full flex align-items-center justify-content-center': true,
+              'd-none': pinParam?.videoTrack
+            }"
+            class=""
+          >
+            <p-avatar
+              [image]="pinAvararUrl ?? ''"
+              size="xlarge"
+              shape="circle"
+              style="transform: scale(3.0);"
+            ></p-avatar>
+          </div>
           <div class="w-full h-full" id="pinMeet"></div>
           <i
             *ngIf="!pinParam?.audioTrack"
