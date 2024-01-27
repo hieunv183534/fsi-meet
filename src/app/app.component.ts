@@ -292,6 +292,8 @@ export class AppComponent implements OnInit {
     if (this.pinParam?.uid)
       this.remoteParams.push(this.pinParam);
     this.pinParam = undefined;
+    this.pinAvararUrl = "";
+    this.pinUserName = "";
   }
 
   decodedAccessToken(authToken: any): any {
