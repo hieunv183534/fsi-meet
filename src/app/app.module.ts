@@ -12,12 +12,15 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { FormsModule } from '@angular/forms';
-import {TooltipModule} from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
+import { MemberItemComponent } from './member-item/member-item.component';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MeetItemComponent
+    MeetItemComponent,
+    MemberItemComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +33,8 @@ import {TooltipModule} from 'primeng/tooltip';
     AvatarGroupModule,
     OverlayPanelModule,
     FormsModule,
-    TooltipModule
+    TooltipModule,
+    InputTextModule
   ],
   providers: [TimeService],
   bootstrap: [AppComponent]

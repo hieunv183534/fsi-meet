@@ -288,6 +288,7 @@ export class AppComponent implements OnInit {
     }
   }
 
+
   unPinUser() {
     if (this.pinParam?.uid)
       this.remoteParams.push(this.pinParam);

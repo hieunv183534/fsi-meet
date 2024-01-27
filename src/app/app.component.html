@@ -32,7 +32,7 @@
               [image]="pinAvararUrl ?? ''"
               size="xlarge"
               shape="circle"
-              style="transform: scale(3.0);"
+              style="transform: scale(3)"
             ></p-avatar>
           </div>
           <div class="w-full h-full" id="pinMeet"></div>
@@ -69,7 +69,8 @@
               class="p-button-rounded p-button-secondary p-button-text"
               style="color: #fff"
               (click)="unPinUser()"
-              pTooltip="Bỏ ghim" tooltipPosition="top"
+              pTooltip="Bỏ ghim"
+              tooltipPosition="top"
             ></button>
             <button
               pButton
@@ -108,8 +109,51 @@
         'show-info-tab': isShowChat || isShowMember
       }"
     >
-      <div class="chat-tab w-full h-full" *ngIf="isShowChat"></div>
-      <div class="member-tab w-full h-full" *ngIf="isShowMember"></div>
+      <div class="chat-tab w-full h-full relative" *ngIf="isShowChat">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="fa-solid fa-times"
+          class="p-button-rounded p-button-secondary p-button-text absolute"
+          style="top: 8px; right: 8px"
+          (click)="isShowChat = false"
+        ></button>
+
+        <div
+          class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2"
+        >
+          <p style="margin: 0">Tin nhắn trong cuộc gọi</p>
+        </div>
+      </div>
+      <div class="member-tab w-full h-full relative" *ngIf="isShowMember">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="fa-solid fa-times"
+          class="p-button-rounded p-button-secondary p-button-text absolute"
+          style="top: 8px; right: 8px"
+          (click)="isShowMember = false"
+        ></button>
+
+        <div
+          class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2"
+        >
+          <p style="margin: 0">Mọi người</p>
+
+          <span class="p-input-icon-left mt-3">
+            <i class="pi pi-search"></i>
+            <input type="text" class='w-full' pInputText placeholder="Tìm người" />
+          </span>
+
+          <p style='font-size: 12px; color: #777; margin: 0;' class='mt-3'>ĐANG THAM GIA CUỘC HỌP</p>
+
+          <div class="member-list w-full ">
+
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="tool-meet w-full flex align-items-center justify-content-between">
