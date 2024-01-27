@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-meet-item',
@@ -13,6 +13,8 @@ export class MeetItemComponent implements OnInit, OnChanges {
 
   @Input() isSceenShare: boolean = false;
 
+  @Output() pin: EventEmitter<any> = new EventEmitter();
+
   userInfo: any;
 
 
@@ -23,7 +25,9 @@ export class MeetItemComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['videoTrack']?.currentValue) {
-      this.videoTrack.play(this.uid);
+      setTimeout(() => {
+        this.videoTrack.play(this.uid);
+      }, 100);
     }
 
     if (changes['audioTrack']?.currentValue) {
@@ -38,6 +42,10 @@ export class MeetItemComponent implements OnInit, OnChanges {
     } else {
       this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == this.uid);
     }
+  }
+
+  pinUser() {
+    this.pin.emit({ uid: this.uid, userName: this.userInfo.name });
   }
 
 }

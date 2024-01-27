@@ -30,6 +30,9 @@ export class AppComponent implements OnInit {
   agoraEngine: any = null;
   agoraEngine1: any = null;
 
+  pinUserName?: string;
+
+
   options: any = {
     appId: '48f5a9f8d4e644a6a1ca96376fdcf441',
     channel: '',
@@ -50,6 +53,13 @@ export class AppComponent implements OnInit {
     audioTrack?: any,
     isScreenShare: boolean
   }[] = [];
+
+  pinParam?: {
+    uid: any,
+    videoTrack?: any,
+    audioTrack?: any,
+    isScreenShare: boolean
+  };
 
   connection!: signalR.HubConnection;
 
@@ -145,7 +155,7 @@ export class AppComponent implements OnInit {
             }
             setTimeout(() => {
               this.remoteParams.find(x => x.uid == user.uid)!.videoTrack = user.videoTrack;
-            }, 1000);
+            }, 100);
           }
         } else {
           let userParam = this.remoteParams.find(x => x.uid == user.uid);
@@ -261,6 +271,19 @@ export class AppComponent implements OnInit {
 
   endCall() {
     window.location.reload();
+  }
+
+  pin(pin: { uid: string, userName: string }) {
+    this.pinUserName = pin.userName;
+    if (this.pinParam?.uid) {
+      this.remoteParams.push(this.pinParam);
+    }
+    let pinUser = this.remoteParams.find(x => x.uid == pin.uid);
+    this.pinParam = pinUser;
+    this.remoteParams = this.remoteParams.filter(x => x.uid != pin.uid);
+    if (this.pinParam?.videoTrack) {
+      this.pinParam.videoTrack.play("pinMeet", { fit: "contain" });
+    }
   }
 
   decodedAccessToken(authToken: any): any {

@@ -14,12 +14,36 @@
               [isSceenShare]="param.isScreenShare"
               [audioTrack]="param.audioTrack"
               [videoTrack]="param.videoTrack"
+              (pin)="pin($event)"
             ></app-meet-item>
           </ng-container>
         </div>
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
-        <div class="pin-meet flex-grow-1" id="pinMeet"></div>
+        <div class="pin-meet flex-grow-1 relative">
+          <div class='w-full h-full' id="pinMeet"></div>
+          <i
+            *ngIf="!pinParam?.audioTrack"
+            class="fa-solid fa-microphone-slash absolute"
+            style="top: 10px; right: 10px; color: #fff"
+          ></i>
+          <i
+            *ngIf="pinParam?.audioTrack"
+            class="fa-solid fa-microphone absolute"
+            style="top: 10px; right: 10px; color: #fff"
+          ></i>
+          <p
+            class="absolute"
+            style="color: #fff; bottom: 10px; left: 10px; margin: 0"
+          >
+            {{ pinUserName }} &nbsp;
+            <i
+              *ngIf="pinParam?.isScreenShare"
+              class="pi pi-desktop"
+              style="font-size: 12px"
+            ></i>
+          </p>
+        </div>
         <div
           [ngClass]="{
             'my-meet flex flex-column justify-content-center gap-1': true,
