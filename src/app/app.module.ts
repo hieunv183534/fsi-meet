@@ -12,6 +12,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { FormsModule } from '@angular/forms';
+import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { FormsModule } from '@angular/forms';
     AvatarModule,
     AvatarGroupModule,
     OverlayPanelModule,
-    FormsModule
+    FormsModule,
+    TooltipModule
   ],
   providers: [TimeService],
   bootstrap: [AppComponent]
