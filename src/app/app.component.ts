@@ -286,6 +286,12 @@ export class AppComponent implements OnInit {
     }
   }
 
+  unPinUser() {
+    if (this.pinParam?.uid)
+      this.remoteParams.push(this.pinParam);
+    this.pinParam = undefined;
+  }
+
   decodedAccessToken(authToken: any): any {
     try {
       this.thisUser = jwt_decode(authToken);

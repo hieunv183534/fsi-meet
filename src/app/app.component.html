@@ -21,7 +21,7 @@
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
         <div class="pin-meet flex-grow-1 relative">
-          <div class='w-full h-full' id="pinMeet"></div>
+          <div class="w-full h-full" id="pinMeet"></div>
           <i
             *ngIf="!pinParam?.audioTrack"
             class="fa-solid fa-microphone-slash absolute"
@@ -43,6 +43,38 @@
               style="font-size: 12px"
             ></i>
           </p>
+          <span
+            class="meet-item-tool absolute align-items-center justify-content-center gap-1"
+          >
+            <!-- <div class="slash absolute" style='width: 2px; height: 30px; background-color: #fff;'></div> -->
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="fa-solid fa-thumbtack"
+              class="p-button-rounded p-button-secondary p-button-text"
+              style="color: #fff"
+              (click)="unPinUser()"
+            ></button>
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="fa-solid fa-microphone"
+              class="p-button-rounded p-button-secondary p-button-text"
+              style="color: #fff"
+              *ngIf="!pinParam?.audioTrack"
+            ></button>
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="fa-solid fa-microphone-slash"
+              class="p-button-rounded p-button-secondary p-button-text"
+              style="color: #fff"
+              *ngIf="pinParam?.audioTrack"
+            ></button>
+          </span>
         </div>
         <div
           [ngClass]="{
