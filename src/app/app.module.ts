@@ -15,13 +15,15 @@ import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { MemberItemComponent } from './member-item/member-item.component';
 import { InputTextModule } from 'primeng/inputtext';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
-  declarations: [
+  declarations: [		
     AppComponent,
     MeetItemComponent,
-    MemberItemComponent
-  ],
+    MemberItemComponent,
+      ChatComponent
+   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
