@@ -115,7 +115,6 @@ export class AppComponent implements OnInit {
   async initAndJoinRTC() {
     this.agoraEngine = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine.join(this.options.appId, this.options.channel, this.options.token, this.options.uid);
-    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
     this.agoraEngine1 = AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
     await this.agoraEngine1.join(this.options.appId, this.options.channel, this.options.token1, this.options.uid + "screen");
