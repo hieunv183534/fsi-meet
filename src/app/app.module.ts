@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { MemberItemComponent } from './member-item/member-item.component';
 import { InputTextModule } from 'primeng/inputtext';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { InputTextModule } from 'primeng/inputtext';
     OverlayPanelModule,
     FormsModule,
     TooltipModule,
-    InputTextModule
+    InputTextModule,
+    AccordionModule
   ],
   providers: [TimeService],
   bootstrap: [AppComponent]

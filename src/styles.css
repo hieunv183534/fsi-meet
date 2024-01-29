@@ -48,3 +48,12 @@ body {
 ::-webkit-scrollbar-thumb:horizontal:hover {
   background: #888888;
 }
+
+
+p-togglebutton {
+  width: 100% !important;
+}
+
+.p-togglebutton{
+  width: 100% !important;
+}
