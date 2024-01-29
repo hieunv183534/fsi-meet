@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 
 @Component({
@@ -11,8 +11,9 @@ export class ChatComponent implements OnInit {
   rows: number = 1;
   maxRows: number = 5;
   connection?: signalR.HubConnection;
-
-
+  userInfo: any;
+  messages: any[] = [];
+  @Input() curUser: any = {};
   constructor() { }
 
   ngOnInit() {
@@ -21,8 +22,10 @@ export class ChatComponent implements OnInit {
   initSignal() {
     const urlParams = new URLSearchParams(window.location.search);
     const authToken = urlParams.get('token');
+    const chanel = urlParams.get('chanel');
+
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7777/meet", {
+      .withUrl("https://fsiconnectedapi.azurewebsites.net/meet", {
         accessTokenFactory: () => authToken + '',
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
@@ -30,8 +33,8 @@ export class ChatComponent implements OnInit {
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    this.connection.start().then(function () {
-
+    this.connection.start().then(async () => {
+      await this.connection?.invoke("JoinMeet", chanel);
       console.log('SignalR Connected!');
     }).catch(function (err: any) {
       console.log('ddeso Connected!');
@@ -40,12 +43,19 @@ export class ChatComponent implements OnInit {
     });
 
     this.connection.on("OnMessage", (userId: string, message: string) => {
-     debugger
+      this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == userId);
+      let msgObj = { sender: this.userInfo, message: message, time: this.getTime(new Date()) };
+
+      if (msgObj.sender.id === this.curUser.nameid) {
+        msgObj.sender.name = 'Bạn';
+      }
+      this.messages.push(msgObj)
     });
 
   }
   async send() {
-    await this.connection?.invoke("Chat", "abc")
+    await this.connection?.invoke("Chat", this.contentText);
+    this.contentText= "";
   }
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && event.shiftKey) {
@@ -73,6 +83,15 @@ export class ChatComponent implements OnInit {
     if (this.contentText === '') {
       this.rows = 1;
     }
+  }
+  getTime(d: Date) {
+    return `${this.formatNumber(d.getHours())}:${this.formatNumber(d.getMinutes())}`;
+  }
+  formatNumber(n: any) {
+    if (n >= 10)
+      return n;
+    else
+      return '0' + n;
   }
 
 }
