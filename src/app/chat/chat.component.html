@@ -1,34 +1,31 @@
 <div class="flex flex-column h-full">
-  <div class="h-full bg-secondary">
+  <div class="bg-secondary h-full overflow-y-auto mb-3" style="max-height: calc(100vh - 225px); " #scrollMe [scrollTop]="scrollMe.scrollHeight">
     <ng-container *ngFor="let m of messages">
-      <div class="flex  w-full mb-2">
-        <div class="mr-2">
-          <p-avatar shape="circle" [image]="m.sender.avatarUrl"></p-avatar>
+      <div class="flex  w-full " [ngClass]="m.showA ? 'mt-2' : 'mt-1' ">
+        <div class="w-2rem mr-2">
+          <p-avatar *ngIf="m.showA" shape="circle" [image]="m.sender.avatarUrl"></p-avatar>
         </div>
         <div class="flex flex-column text-sm justify-content-between">
-          <div class="flex  flex-row align-items-end line-height-1">
+          <div *ngIf="m.showA" class="flex flex-row align-items-end line-height-1">
             <span class="font-medium">{{m.sender.name}}</span>
-            <span class="text-xs text-gray-700 ml-2"> {{m.time}}</span>
+            <span class="text-xs text-gray-700 ml-2"> {{getTime(m.time)}}</span>
           </div>
-          <span>{{m.message}}</span>
+          <span [innerHTML]="m.message"></span>
         </div>
       </div>
     </ng-container>
   </div>
-  <div style="min-height: 48px; overflow: hidden; background-color: #eaedf3;"
-    class="h-auto py-1 border-round-3xl flex flex-row align-items-center justify-content-between">
-    <div class="inline-flex flex-column relative w-11 h-full">
-      <span class="flex-column align-items-center w-auto h-auto transition-none">
-        <textarea style="resize: none" [(ngModel)]="contentText" [rows]="rows" #areaInput
-          class="relative custom-textarea h-full w-10 border-none border-round-3xl my-2 px-4 "
-          (keydown)="handleKeyDown($event)" (keyup)="handleKeyUp($event)" (ngModelChange)="handleChange()"
-          placeholder="Type your message...">
-       </textarea>
-      </span>
+  <div style="background-color: #eaedf3"
+    class="h-auto border-round-3xl flex justify-content-between align-items-center">
+    <div class="h-auto w-full  flex align-items-center py-2">
+      <textarea class="w-full border-round-3xl px-4" [rows]="rows" [(ngModel)]="contentText"
+        style="resize: none; border: none; white-space: normal; line-height: 16px; outline: none ;background-color: #eaedf3"
+        placeholder="Type your message..." (keydown)="handleKeyDown($event)" (keyup)="handleKeyUp($event)"
+        (ngModelChange)="handleChange($event)"></textarea>
     </div>
-    <div
-      class="flex justify-content-center align-items-center hover:bg-gray-300 border-circle h-3rem w-3rem cursor-poiter">
-      <i class="pi pi-send cursor-poiter text-primary text-xl"></i>
+    <div style="min-width: 3rem;" (click)="this.contentText !=='' ? send():''" [ngClass]="this.contentText !=='' ? 'text-primary  cursor-pointer hover:bg-gray-300' : 'text-blue-200' "
+      class="flex justify-content-center align-items-center border-circle h-3rem w-3rem">
+      <i class="pi pi-send text-xl"></i>
     </div>
   </div>
 </div>
