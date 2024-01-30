@@ -10,39 +10,15 @@ export class ChatComponent implements OnInit {
   contentText: string = "";
   rows: number = 1;
   maxRows: number = 5;
-  connection?: signalR.HubConnection;
+  // connection?: signalR.HubConnection;
   userInfo: any;
   messages: any[] = [];
   @Input() curUser: any = {};
+  @Input() connection?: signalR.HubConnection;
   constructor() { }
 
   ngOnInit() {
-    this.initSignal();
-  }
-  initSignal() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const authToken = urlParams.get('token');
-    const chanel = urlParams.get('chanel');
-
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://fsiconnectedapi.azurewebsites.net/meet", {
-        accessTokenFactory: () => authToken + '',
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-
-    this.connection.start().then(async () => {
-      await this.connection?.invoke("JoinMeet", chanel);
-      console.log('SignalR Connected!');
-    }).catch(function (err: any) {
-      console.log('ddeso Connected!');
-
-      return console.error(err.toString());
-    });
-
-    this.connection.on("OnMessage", (userId: string, message: string) => {
+    this.connection?.on("OnMessage", (userId: string, message: string) => {
       this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == userId);
       let msgObj = { sender: this.userInfo, message: message, time: new Date(), showA: false };
 
@@ -68,8 +44,8 @@ export class ChatComponent implements OnInit {
         }
       });
     });
-
   }
+
   async send() {
     if (this.contentText === "")
       return;
