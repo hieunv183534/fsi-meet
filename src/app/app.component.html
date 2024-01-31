@@ -109,7 +109,7 @@
         'show-info-tab': isShowChat || isShowMember
       }"
     >
-      <div class="chat-tab w-full h-full relative" *ngIf="isShowChat">
+      <div class="chat-tab w-full h-full relative"  [ngClass]="isShowChat?'block':'hidden'">
         <button
           pButton
           pRipple
@@ -125,7 +125,7 @@
         >
           <p class="m-0">Tin nhắn trong cuộc gọi</p>
           <div class="h-full">
-            <app-chat></app-chat>
+            <app-chat [curUser]="thisUser" [connection]="connection"></app-chat>
           </div>
         </div>
       </div>

@@ -70,6 +70,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initSignal();
+
     this.timeService.currentTime$.subscribe((time) => {
       this.currentTime = time;
     });
@@ -81,7 +83,30 @@ export class AppComponent implements OnInit {
     this.getRTCToken(authToken, chanel);
     this.getUsersInConversation(authToken, chanel);
   }
+  initSignal() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authToken = urlParams.get('token');
+    const chanel = urlParams.get('chanel');
 
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://fsiconnectedapi.azurewebsites.net/meet", {
+        accessTokenFactory: () => authToken + '',
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets
+      })
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+
+    this.connection.start().then(async () => {
+      await this.connection?.invoke("JoinMeet", chanel);
+      console.log('SignalR Connected!');
+    }).catch(function (err: any) {
+      console.log('ddeso Connected!');
+
+      return console.error(err.toString());
+    });
+
+  }
   getUsersInConversation(authToken: any, chanel: any) {
     axios.get("https://fsiconnectedapi.azurewebsites.net/api/fsi/chat/users-by-conversation/" + chanel, {
       headers: {

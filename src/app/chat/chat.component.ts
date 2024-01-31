@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 
 @Component({
@@ -10,42 +10,47 @@ export class ChatComponent implements OnInit {
   contentText: string = "";
   rows: number = 1;
   maxRows: number = 5;
-  connection?: signalR.HubConnection;
-
-
+  // connection?: signalR.HubConnection;
+  userInfo: any;
+  messages: any[] = [];
+  @Input() curUser: any = {};
+  @Input() connection?: signalR.HubConnection;
   constructor() { }
 
   ngOnInit() {
-    this.initSignal();
-  }
-  initSignal() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const authToken = urlParams.get('token');
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7777/meet", {
-        accessTokenFactory: () => authToken + '',
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
+    this.connection?.on("OnMessage", (userId: string, message: string) => {
+      this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == userId);
+      let msgObj = { sender: this.userInfo, message: message, time: new Date(), showA: false };
 
-    this.connection.start().then(function () {
-
-      console.log('SignalR Connected!');
-    }).catch(function (err: any) {
-      console.log('ddeso Connected!');
-
-      return console.error(err.toString());
+      if (msgObj.sender.id === this.curUser.nameid) {
+        msgObj.sender.name = 'Bạn';
+      }
+      this.messages.push(msgObj)
+      this.messages?.forEach((m, i: number) => {
+        if (i == 0) {
+          m.showA = true;
+        } else {
+          let _m = this.messages[i - 1];
+          if (m.sender?.id == _m.sender?.id) {
+            let diff = Number(new Date(m.time ?? "")) - Number(new Date(_m.time ?? ""));
+            if (diff > 240000) {
+              m.showA = true;
+            } else {
+              return;
+            }
+          } else {
+            m.showA = true;
+          }
+        }
+      });
     });
-
-    this.connection.on("OnMessage", (userId: string, message: string) => {
-     debugger
-    });
-
   }
+
   async send() {
-    await this.connection?.invoke("Chat", "abc")
+    if (this.contentText === "")
+      return;
+    await this.connection?.invoke("Chat", this.contentText);
+    this.contentText = "";
   }
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && event.shiftKey) {
@@ -69,10 +74,19 @@ export class ChatComponent implements OnInit {
       event.preventDefault();
     }
   }
-  handleChange(): void {
+  handleChange(event: any): void {
     if (this.contentText === '') {
       this.rows = 1;
     }
+  }
+  getTime(d: Date) {
+    return `${this.formatNumber(d.getHours())}:${this.formatNumber(d.getMinutes())}`;
+  }
+  formatNumber(n: any) {
+    if (n >= 10)
+      return n;
+    else
+      return '0' + n;
   }
 
 }
