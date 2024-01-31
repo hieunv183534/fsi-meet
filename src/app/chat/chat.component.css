@@ -1,0 +1,19 @@
+.custom-textarea{
+    outline: none;
+    box-shadow: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 14px;
+    appearance: none;
+    background-color: #eaedf3;
+    height: auto;
+    min-height: 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    resize: none;
+    padding: 0 16px;
+    line-height: 1.5rem;
+}
+.-translateY-50{
+    transform: translateY(-50%);
+  }

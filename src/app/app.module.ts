@@ -16,13 +16,15 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MemberItemComponent } from './member-item/member-item.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { AccordionModule } from 'primeng/accordion';
+import { ChatComponent } from './chat/chat.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MeetItemComponent,
-    MemberItemComponent
-  ],
+    MemberItemComponent,
+      ChatComponent
+   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
