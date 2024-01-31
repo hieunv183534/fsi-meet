@@ -1,5 +1,10 @@
 <div class="flex align-items-center justify-content-between">
-  <div class="flex align-items-center justify-content-start">
+  <div class="flex align-items-center justify-content-start relative">
+    <i
+      *ngIf="isPinned"
+      class="fa-solid fa-thumbtack absolute"
+      style="top: 16px; left: -16px; transform: rotate(-90deg)"
+    ></i>
     <p-avatar [image]="userInfo.avatarUrl" shape="circle"></p-avatar>
     <p class="ml-2">{{ userInfo.name }}</p>
     &nbsp;
@@ -7,6 +12,7 @@
   </div>
 
   <button
+    *ngIf="!isInvited"
     pButton
     pRipple
     type="button"
@@ -18,7 +24,7 @@
 <p-overlayPanel #op>
   <ng-template pTemplate>
     <div
-      class="flex flex-column align-items-start justify-content-start gap-2 w-auto"
+      class="member-item-tool flex flex-column align-items-start justify-content-start gap-2 w-auto"
     >
       <p-toggleButton
         [(ngModel)]="videoTrack"
@@ -27,13 +33,20 @@
         offIcon="fa-solid fa-video"
         onIcon="fa-solid fa-video-slash"
       ></p-toggleButton>
-      <p-toggleButton
-        offLabel="Ghim"
-        onLabel="Bỏ ghim"
-        offIcon="fa-solid fa-thumbtack"
-        onIcon="fa-solid fa-times"
-        (onChange)="changePin($event)"
-      ></p-toggleButton>
+      <p-button
+        *ngIf="!isPinned"
+        label="Ghim"
+        icon="fa-solid fa-thumbtack"
+        class="p-button-info w-full"
+        (onClick)="pinU()"
+      ></p-button>
+      <p-button
+        *ngIf="isPinned"
+        label="Bỏ ghim"
+        icon="fa-solid fa-times"
+        class="p-button-info w-full"
+        (onClick)="unPinU()"
+      ></p-button>
       <p-toggleButton
         offLabel="Bật mic"
         onLabel="Tắt mic"

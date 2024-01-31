@@ -109,7 +109,10 @@
         'show-info-tab': isShowChat || isShowMember
       }"
     >
-      <div class="chat-tab w-full h-full relative"  [ngClass]="isShowChat?'block':'hidden'">
+      <div
+        class="chat-tab w-full h-full relative"
+        [ngClass]="isShowChat ? 'block' : 'hidden'"
+      >
         <button
           pButton
           pRipple
@@ -164,6 +167,16 @@
               <div
                 class="width-full h-auto flex flex-column justify-content-start gap-1"
               >
+                <ng-container *ngIf="pinParam?.uid">
+                  <app-member-item
+                    [uid]="pinParam?.uid"
+                    [audioTrack]="pinParam?.audioTrack"
+                    [videoTrack]="pinParam?.videoTrack"
+                    [isSceenShare]="pinParam?.isScreenShare ?? false"
+                    (unPin)="unPinUser()"
+                    [isPinned]="true"
+                  ></app-member-item>
+                </ng-container>
                 <ng-container *ngFor="let member of remoteParams">
                   <app-member-item
                     [uid]="member.uid"
@@ -178,7 +191,14 @@
             <p-accordionTab header="Được mời">
               <div
                 class="width-full h-auto flex flex-column justify-content-start gap-1"
-              ></div>
+              >
+                <ng-container *ngFor="let invitedUserId of invitedUserIds">
+                  <app-member-item
+                    [uid]="invitedUserId"
+                    [isInvited]="true"
+                  ></app-member-item>
+                </ng-container>
+              </div>
             </p-accordionTab>
           </p-accordion>
         </div>
