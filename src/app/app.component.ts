@@ -3,6 +3,8 @@ import { TimeService } from './time.service';
 import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
 import AgoraRTC from "agora-rtc-sdk-ng";
+AgoraRTC.disableLogUpload();
+AgoraRTC.setLogLevel(4);
 import jwt_decode from 'jwt-decode';
 import { DOCUMENT } from '@angular/common';
 import { MeetItemComponent } from './meet-item/meet-item.component';
@@ -169,7 +171,9 @@ export class AppComponent implements OnInit {
 
     this.agoraEngine.on('user-left', (user: any) => {
       this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
-      this.invitedUserIds.push(user.uid);
+      if (!user.uid.includes("screen")) {
+        this.invitedUserIds.push(user.uid);
+      }
     });
 
 
@@ -195,7 +199,6 @@ export class AppComponent implements OnInit {
         }
       }
       if (mediaType == "audio") {
-        debugger;
         let param = this.remoteParams.find(x => x.uid == user.uid);
         param!.audioTrack = user.audioTrack;
       }
@@ -220,7 +223,6 @@ export class AppComponent implements OnInit {
       let remoteUsers = this.agoraEngine.remoteUsers;
       remoteUsers.forEach(async (remoteUser: any) => {
         if (!remoteUser.uid.includes(this.thisUser.nameid)) {
-          console.log("hieunv183534 " + remoteUser.uid);
           if (remoteUser.uid.includes("screen")) {
             if (remoteUser.hasVideo) {
               let oldRemoteUser = this.remoteParams.find(x => x.uid == remoteUser.uid);
