@@ -1,3 +1,58 @@
-<p>
-  member-item works!
-</p>
+<div class="flex align-items-center justify-content-between">
+  <div class="flex align-items-center justify-content-start relative">
+    <i
+      *ngIf="isPinned"
+      class="fa-solid fa-thumbtack absolute"
+      style="top: 16px; left: -16px; transform: rotate(-90deg)"
+    ></i>
+    <p-avatar [image]="userInfo.avatarUrl" shape="circle"></p-avatar>
+    <p class="ml-2">{{ userInfo.name }}</p>
+    &nbsp;
+    <i *ngIf="isSceenShare" class="pi pi-desktop" style="font-size: 15px"></i>
+  </div>
+
+  <button
+    *ngIf="!isInvited"
+    pButton
+    pRipple
+    type="button"
+    icon="pi pi-ellipsis-v"
+    class="p-button-rounded p-button-secondary p-button-text"
+    (click)="op.toggle($event)"
+  ></button>
+</div>
+<p-overlayPanel #op>
+  <ng-template pTemplate>
+    <div
+      class="member-item-tool flex flex-column align-items-start justify-content-start gap-2 w-auto"
+    >
+      <p-toggleButton
+        [(ngModel)]="videoTrack"
+        offLabel="Bắt đầu xem"
+        onLabel="Không xem"
+        offIcon="fa-solid fa-video"
+        onIcon="fa-solid fa-video-slash"
+      ></p-toggleButton>
+      <p-button
+        *ngIf="!isPinned"
+        label="Ghim"
+        icon="fa-solid fa-thumbtack"
+        class="p-button-info w-full"
+        (onClick)="pinU()"
+      ></p-button>
+      <p-button
+        *ngIf="isPinned"
+        label="Bỏ ghim"
+        icon="fa-solid fa-times"
+        class="p-button-info w-full"
+        (onClick)="unPinU()"
+      ></p-button>
+      <p-toggleButton
+        offLabel="Bật mic"
+        onLabel="Tắt mic"
+        offIcon="fa-solid fa-microphone"
+        onIcon="fa-solid fa-microphone-slash"
+      ></p-toggleButton>
+    </div>
+  </ng-template>
+</p-overlayPanel>
