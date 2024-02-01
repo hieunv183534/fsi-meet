@@ -31,6 +31,8 @@ export class MemberItemComponent implements OnInit, OnChanges {
         this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == this.uid);
       }
     }
+    console.log(this.userInfo);
+    console.log(this.uid);
   }
 
   ngOnInit() {
@@ -40,6 +42,8 @@ export class MemberItemComponent implements OnInit, OnChanges {
     } else {
       this.userInfo = JSON.parse(localStorage.getItem("users") || "[]").find((x: any) => x.id == this.uid);
     }
+    console.log(this.userInfo);
+    console.log(this.uid);
   }
 
 
