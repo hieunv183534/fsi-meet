@@ -1,0 +1,61 @@
+<div class="flex flex-column md:flex-row justify-content-between  align-items-start w-full h-full">
+  <div class="h-auto w-full">
+    <p-tabView>
+      <p-tabPanel leftIcon="pi pi-volume-up" header="Âm thanh">
+        <div class="flex flex-column justify-content-start w-full">
+          <div class="flex flex-column justify-content-start w-full mb-2">
+            <span class="mb-2 font-semibold text-base">Loa</span>
+            <div class="flex flex-row w-full justify-content-between align-items-center">
+              <div style="min-width:80%;max-width: 80%;" class="h-full">
+                <p-dropdown class="mb-2" [options]="speakers"
+                  (onChange)="speakerId.emit($event.value.deviceId); startPreviewSpeaker($event.value.deviceId)"
+                  optionLabel="label">
+                </p-dropdown>
+              </div>
+              <div class="w-7rem flex justify-content-center">
+                <button *ngIf="!isCheckSpeaker" class="p-button-sm " pButton type="button"
+                  (click)="(startPreviewSpeaker('default'))">Kiểm tra</button>
+                <i *ngIf="isCheckSpeaker" class="pi pi-volume-up text-xl"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-column justify-content-start w-full">
+            <span class="mb-2 font-semibold text-base">Microphone</span>
+            <div class="flex flex-row w-full justify-content-between align-items-center">
+              <div  style="min-width:80%;max-width: 80%;" class="h-full">
+                <p-dropdown class="mb-2" [options]="microphones"
+                  (onChange)="microphoneId.emit($event.value.deviceId); startPreviewMic($event.value.deviceId)"
+                  optionLabel="label">
+                </p-dropdown>
+              </div>
+              <div class="w-7rem flex justify-content-center">
+                <button *ngIf="!isCheckMic" class="p-button-sm " pButton type="button"
+                  (click)="(startPreviewMic('default'))">Kiểm tra</button>
+                <i *ngIf="isCheckMic " id="mic-icon" class="fas fa-microphone text-xl"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </p-tabPanel>
+      <p-tabPanel leftIcon="pi pi-video" header="Video">
+        <div class="flex flex-column justify-content-start w-full md:w-15rem mr-3">
+          <span class="mb-2 font-semibold text-base">Máy ảnh</span>
+          <div class="flex flex-row md:flex-column w-full md:w-15rem">
+            <p-dropdown class="mb-2"
+              (onChange)="cameraId.emit($event.value.deviceId);switchCamera($event.value.deviceId)" [options]="cameras"
+              optionLabel="label"></p-dropdown>
+            <!-- <p-dropdown class="mb-2" (onChange)="switchCamera($event.value.deviceId)" [options]="cameras"
+              optionLabel="label"></p-dropdown> -->
+            <!-- <button class="p-button-sm w-7rem ml-3 mb-2 md:ml-0" pButton type="button" (click)="publicCamera()">Bật
+            camera</button> -->
+          </div>
+        </div>
+        <div class="h-17rem w-full md:w-29rem bg-primary overflow-hidden border-round-sm">
+          <div class="h-full w-full" id="previewCamera">
+          </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+</div>

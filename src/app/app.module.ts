@@ -16,18 +16,27 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MemberItemComponent } from './member-item/member-item.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChatComponent } from './chat/chat.component';
-
+import { PreviewMeetComponent } from './preview-meet/preview-meet.component';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { TabMenuModule } from 'primeng/tabmenu';
+import {TabViewModule} from 'primeng/tabview';
 @NgModule({
-  declarations: [		
+  declarations: [
     AppComponent,
     MeetItemComponent,
     MemberItemComponent,
-      ChatComponent
-   ],
+    ChatComponent,
+    PreviewMeetComponent
+  ],
   imports: [
     BrowserModule,
+    TabViewModule,
+    TabMenuModule,
+    DropdownModule,
     BrowserAnimationsModule,
     CardModule,
+    DialogModule,
     ButtonModule,
     ToggleButtonModule,
     BadgeModule,

@@ -1,23 +1,24 @@
-import { Component, ComponentFactoryResolver, Inject, Injector, OnInit, Renderer2 } from '@angular/core';
+import { Component, Inject, Injector, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { TimeService } from './time.service';
-import { ActivatedRoute } from '@angular/router';
 import axios from 'axios';
 import AgoraRTC from "agora-rtc-sdk-ng";
 import jwt_decode from 'jwt-decode';
 import { DOCUMENT } from '@angular/common';
-import { MeetItemComponent } from './meet-item/meet-item.component';
 import * as signalR from '@microsoft/signalr';
 
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  encapsulation: ViewEncapsulation.None
+
 })
 export class AppComponent implements OnInit {
   title = 'fsi-meet';
 
   thisUser: any = {};
+  listMicrophones: any[] = [];
 
   isVideoOn: boolean = false;
   isMicroOn: boolean = false;
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
 
   isShowChat: boolean = false;
   isShowMember: boolean = false;
+  isShowPreview: boolean = false;
 
   currentTime: string = '';
   agoraEngine: any = null;
@@ -33,6 +35,9 @@ export class AppComponent implements OnInit {
   pinUserName?: string;
   pinAvararUrl?: string;
 
+  cameraDeviceId: string = ''
+  micDeviceId: string = '';
+  speakerDeviceId: string = '';
 
   options: any = {
     appId: '48f5a9f8d4e644a6a1ca96376fdcf441',
@@ -69,9 +74,8 @@ export class AppComponent implements OnInit {
     private renderer: Renderer2) {
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.initSignal();
-
     this.timeService.currentTime$.subscribe((time) => {
       this.currentTime = time;
     });
@@ -272,9 +276,9 @@ export class AppComponent implements OnInit {
 
   // camera
   async shareCamera() {
-    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    await this.agoraEngine.publish([this.localParam.videoTrack]);
-    this.localParam.videoTrack.play("localCameraVideo");
+    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack({ cameraId: this.cameraDeviceId ? this.cameraDeviceId : "" });// tạo camera mới
+    await this.agoraEngine.publish([this.localParam.videoTrack]); //public cam
+    this.localParam.videoTrack.play("localCameraVideo");// 
     this.isVideoOn = true;
   }
   async endShareCamera() {
@@ -285,7 +289,7 @@ export class AppComponent implements OnInit {
 
   // audio
   async shareVoice() {
-    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({});
+    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({microphoneId: this.micDeviceId ? this.micDeviceId : 'default'});
     await this.agoraEngine.publish([this.localParam.audioTrack]);
     this.isMicroOn = true;
   }
@@ -327,5 +331,41 @@ export class AppComponent implements OnInit {
       this.options.uid = this.thisUser.nameid
     } catch (Error) {
     }
+  }
+  // async publicCamera(e: any) {
+  //   if (e.isPublicCam) {
+  //     await this.agoraEngine.unpublish([this.localParam.videoTrack]);
+  //   }
+  //   this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack({ cameraId: e.id });// tạo camera mới
+  //   await this.agoraEngine.publish([this.localParam.videoTrack]); //public cam
+  //   this.localParam.videoTrack.play("localCameraVideo");// 
+  //   this.isVideoOn = true;
+  //   this.isShowPreview = false;
+  // }
+  async changeCamera(idCam: string) {
+    if (this.isVideoOn) {
+      await this.agoraEngine.unpublish([this.localParam.videoTrack]);
+      this.localParam.videoTrack.close();
+      this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack({ cameraId: idCam });// tạo camera mới
+      await this.agoraEngine.publish([this.localParam.videoTrack]); //public cam
+      this.localParam.videoTrack.play("localCameraVideo");// 
+    }
+    this.cameraDeviceId = idCam
+  }
+  async previewVideo() {
+    this.localParam.videoTrack = await AgoraRTC.createCameraVideoTrack({ cameraId: this.cameraDeviceId ? this.cameraDeviceId : '' });// tạo camera mới
+    this.localParam.videoTrack.play("previewVideo");// 
+  }
+  async changeMicrophone(id: string) {
+    if (this.isMicroOn) {
+      await this.agoraEngine.unpublish([this.localParam.audioTrack]);
+      this.localParam.audioTrack.close();
+      this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({ microphoneId: id });
+      await this.agoraEngine.publish([this.localParam.audioTrack]);
+    }
+    this.micDeviceId = id
+  }
+  async changeSpeaker(speakerId: string) {
+      debugger
   }
 }

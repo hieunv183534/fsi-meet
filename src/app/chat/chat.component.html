@@ -5,9 +5,9 @@
         <div class="w-2rem mr-2">
           <p-avatar *ngIf="m.showA" shape="circle" [image]="m.sender.avatarUrl"></p-avatar>
         </div>
-        <div class="flex flex-column text-sm justify-content-between">
+        <div class="flex flex-column justify-content-between" style="font-size: 13px;">
           <div *ngIf="m.showA" class="flex flex-row align-items-end line-height-1">
-            <span class="font-medium">{{m.sender.name}}</span>
+            <span class="font-semibold text-gray-700">{{m.sender.name}}</span>
             <span class="text-xs text-gray-700 ml-2"> {{getTime(m.time)}}</span>
           </div>
           <span [innerHTML]="m.message"></span>

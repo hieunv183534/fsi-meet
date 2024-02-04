@@ -1,128 +1,66 @@
 <div class="meet flex flex-column gap-1">
   <div class="main-meet w-full flex-grow-1 flex gap-2">
-    <div
-      [ngClass]="{
+    <div [ngClass]="{
         'meet-tab flex flex-column gap-1': true,
         'show-info-tab1': isShowChat || isShowMember
-      }"
-    >
+      }">
       <div class="meet-top">
         <div class="list-meet-item">
           <ng-container *ngFor="let param of remoteParams">
-            <app-meet-item
-              [uid]="param.uid"
-              [isSceenShare]="param.isScreenShare"
-              [audioTrack]="param.audioTrack"
-              [videoTrack]="param.videoTrack"
-              (pin)="pin($event)"
-            ></app-meet-item>
+            <app-meet-item [uid]="param.uid" [isSceenShare]="param.isScreenShare" [audioTrack]="param.audioTrack"
+              [videoTrack]="param.videoTrack" (pin)="pin($event)"></app-meet-item>
           </ng-container>
         </div>
       </div>
       <div class="meet-bottom flex-grow-1 w-full flex gap-1">
         <div class="pin-meet flex-grow-1 relative">
-          <div
-            [ngClass]="{
+          <div [ngClass]="{
               'no-video w-full h-full flex align-items-center justify-content-center': true,
               'd-none': pinParam?.videoTrack
-            }"
-            class=""
-          >
-            <p-avatar
-              [image]="pinAvararUrl ?? ''"
-              size="xlarge"
-              shape="circle"
-              style="transform: scale(3)"
-            ></p-avatar>
+            }" class="">
+            <p-avatar [image]="pinAvararUrl ?? ''" size="xlarge" shape="circle" style="transform: scale(3)"></p-avatar>
           </div>
           <div class="w-full h-full" id="pinMeet"></div>
-          <i
-            *ngIf="!pinParam?.audioTrack"
-            class="fa-solid fa-microphone-slash absolute"
-            style="top: 10px; right: 10px; color: #fff"
-          ></i>
-          <i
-            *ngIf="pinParam?.audioTrack"
-            class="fa-solid fa-microphone absolute"
-            style="top: 10px; right: 10px; color: #fff"
-          ></i>
-          <p
-            class="absolute"
-            style="color: #fff; bottom: 10px; left: 10px; margin: 0"
-          >
+          <i *ngIf="!pinParam?.audioTrack" class="fa-solid fa-microphone-slash absolute"
+            style="top: 10px; right: 10px; color: #fff"></i>
+          <i *ngIf="pinParam?.audioTrack" class="fa-solid fa-microphone absolute"
+            style="top: 10px; right: 10px; color: #fff"></i>
+          <p class="absolute" style="color: #fff; bottom: 10px; left: 10px; margin: 0">
             {{ pinUserName }} &nbsp;
-            <i
-              *ngIf="pinParam?.isScreenShare"
-              class="pi pi-desktop"
-              style="font-size: 12px"
-            ></i>
+            <i *ngIf="pinParam?.isScreenShare" class="pi pi-desktop" style="font-size: 12px"></i>
           </p>
-          <span
-            class="meet-item-tool absolute align-items-center justify-content-center gap-1"
-          >
+          <span class="meet-item-tool absolute align-items-center justify-content-center gap-1">
             <!-- <div class="slash absolute" style='width: 2px; height: 30px; background-color: #fff;'></div> -->
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-times"
-              class="p-button-rounded p-button-secondary p-button-text"
-              style="color: #fff"
-              (click)="unPinUser()"
-              pTooltip="Bỏ ghim"
-              tooltipPosition="top"
-            ></button>
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="fa-solid fa-microphone"
-              class="p-button-rounded p-button-secondary p-button-text"
-              style="color: #fff"
-              *ngIf="!pinParam?.audioTrack"
-            ></button>
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="fa-solid fa-microphone-slash"
-              class="p-button-rounded p-button-secondary p-button-text"
-              style="color: #fff"
-              *ngIf="pinParam?.audioTrack"
-            ></button>
+            <button pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-secondary p-button-text" style="color: #fff" (click)="unPinUser()"
+              pTooltip="Bỏ ghim" tooltipPosition="top"></button>
+            <button pButton pRipple type="button" icon="fa-solid fa-microphone"
+              class="p-button-rounded p-button-secondary p-button-text" style="color: #fff"
+              *ngIf="!pinParam?.audioTrack"></button>
+            <button pButton pRipple type="button" icon="fa-solid fa-microphone-slash"
+              class="p-button-rounded p-button-secondary p-button-text" style="color: #fff"
+              *ngIf="pinParam?.audioTrack"></button>
           </span>
         </div>
-        <div
-          [ngClass]="{
+        <div [ngClass]="{
             'my-meet flex flex-column justify-content-center gap-1': true,
             'd-none': isShowChat || isShowMember
-          }"
-        >
+          }">
           <div class="my-video" id="localCameraVideo"></div>
           <div class="my-video" id="localScreenVideo"></div>
         </div>
       </div>
     </div>
-    <div
-      [ngClass]="{
+    <div [ngClass]="{
         'info-tab': true,
         'show-info-tab': isShowChat || isShowMember
-      }"
-    >
-      <div class="chat-tab w-full h-full relative"  [ngClass]="isShowChat?'block':'hidden'">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="fa-solid fa-times"
-          class="p-button-rounded p-button-secondary p-button-text absolute"
-          style="top: 8px; right: 8px"
-          (click)="isShowChat = false"
-        ></button>
+      }">
+      <div class="chat-tab w-full h-full relative" [ngClass]="isShowChat?'block':'hidden'">
+        <button pButton pRipple type="button" icon="fa-solid fa-times"
+          class="p-button-rounded p-button-secondary p-button-text absolute" style="top: 8px; right: 8px"
+          (click)="isShowChat = false"></button>
 
-        <div
-          class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2"
-        >
+        <div class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2">
           <p class="m-0">Tin nhắn trong cuộc gọi</p>
           <div class="h-full">
             <app-chat [curUser]="thisUser" [connection]="connection"></app-chat>
@@ -130,19 +68,11 @@
         </div>
       </div>
       <div class="member-tab w-full h-full relative" *ngIf="isShowMember">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="fa-solid fa-times"
-          class="p-button-rounded p-button-secondary p-button-text absolute"
-          style="top: 8px; right: 8px"
-          (click)="isShowMember = false"
-        ></button>
+        <button pButton pRipple type="button" icon="fa-solid fa-times"
+          class="p-button-rounded p-button-secondary p-button-text absolute" style="top: 8px; right: 8px"
+          (click)="isShowMember = false"></button>
 
-        <div
-          class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2"
-        >
+        <div class="member-tab-wrapper w-full h-full flex flex-column justify-content-start p-3 gap-2">
           <p style="margin: 0">Mọi người</p>
 
           <span class="p-input-icon-left mt-3">
@@ -164,121 +94,52 @@
       <h5>{{ currentTime }}</h5>
     </div>
     <div class="tool-mid flex align-items-center justify-content-between gap-3">
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-microphone"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="isMicroOn"
-        (click)="endShareVoice()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-microphone-slash"
-        class="p-button-rounded p-button-danger"
-        *ngIf="!isMicroOn"
-        (click)="shareVoice()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-video"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="isVideoOn"
-        (click)="endShareCamera()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-video-slash"
-        class="p-button-rounded p-button-danger"
-        *ngIf="!isVideoOn"
-        (click)="shareCamera()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-up-right-from-square"
-        class="p-button-rounded"
-        *ngIf="isScreenShare"
-        (click)="endShareScreen()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-up-right-from-square"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isScreenShare"
-        (click)="shareScreen()"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-ellipsis-vertical"
-        class="p-button-rounded p-button-secondary"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-phone"
-        class="p-button-rounded p-button-danger"
-        (click)="endCall()"
-      ></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-microphone" class="p-button-rounded p-button-secondary"
+        *ngIf="isMicroOn" (click)="endShareVoice()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-microphone-slash" class="p-button-rounded p-button-danger"
+        *ngIf="!isMicroOn" (click)="shareVoice()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-video" class="p-button-rounded p-button-secondary"
+        *ngIf="isVideoOn" (click)="endShareCamera()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-video-slash" class="p-button-rounded p-button-danger"
+        *ngIf="!isVideoOn" (click)="shareCamera();op.hide()" (mouseenter)="previewVideo();op.toggle($event)"
+        (mouseleave)="op.hide()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square" class="p-button-rounded"
+        *ngIf="isScreenShare" (click)="endShareScreen()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-up-right-from-square"
+        class="p-button-rounded p-button-secondary" *ngIf="!isScreenShare" (click)="shareScreen()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-ellipsis-vertical"
+        class="p-button-rounded p-button-secondary" (click)="isShowPreview=true"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-phone" class="p-button-rounded p-button-danger"
+        (click)="endCall()"></button>
     </div>
-    <div
-      class="tool-right flex align-items-center justify-content-end gap-3 pr-4"
-    >
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-users"
-        class="p-button-rounded"
-        *ngIf="isShowMember"
-        (click)="isShowMember = false"
-        pBadge
-        value="2"
-        severity="success"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-users"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isShowMember"
-        (click)="isShowMember = true; isShowChat = false"
-        pBadge
-        value="2"
-        severity="success"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-message"
-        class="p-button-rounded"
-        *ngIf="isShowChat"
-        (click)="isShowChat = false"
-      ></button>
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="fa-solid fa-message"
-        class="p-button-rounded p-button-secondary"
-        *ngIf="!isShowChat"
-        (click)="isShowChat = true; isShowMember = false"
-      ></button>
+    <div class="tool-right flex align-items-center justify-content-end gap-3 pr-4">
+      <button pButton pRipple type="button" icon="fa-solid fa-users" class="p-button-rounded" *ngIf="isShowMember"
+        (click)="isShowMember = false" pBadge value="2" severity="success"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-users" class="p-button-rounded p-button-secondary"
+        *ngIf="!isShowMember" (click)="isShowMember = true; isShowChat = false" pBadge value="2"
+        severity="success"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-message" class="p-button-rounded" *ngIf="isShowChat"
+        (click)="isShowChat = false"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-message" class="p-button-rounded p-button-secondary"
+        *ngIf="!isShowChat" (click)="isShowChat = true; isShowMember = false"></button>
     </div>
   </div>
+  <ng-container *ngIf="isShowPreview">
+    <p-dialog [resizable]="true" header="Cài đặt" (onHide)="isShowPreview=false"
+      [breakpoints]="{'1500px': '60vw','1380px': '60vw','1080px': '70vw','960px': '75vw', '640px': '100vw'}"
+      [(visible)]="isShowPreview" [modal]="true" [style]="{width: '40vw',height:'auto'}">
+      <app-preview-meet (cameraId)="changeCamera($event)" (microphoneId)="changeMicrophone($event)"
+        (speakerId)="changeSpeaker($event)"></app-preview-meet>
+    </p-dialog>
+  </ng-container>
+
+  <p-overlayPanel [showTransitionOptions]="'200ms'" [hideTransitionOptions]="'200ms'" #op [dismissable]="true">
+    <ng-template pTemplate>
+      <div style="height: 90px;" class="w-10rem overflow-hidden border-round-sm">
+
+        <div class="h-full w-full" id="previewVideo"></div>
+      </div>
+
+    </ng-template>
+  </p-overlayPanel>
 </div>
