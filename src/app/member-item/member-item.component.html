@@ -26,13 +26,6 @@
     <div
       class="member-item-tool flex flex-column align-items-start justify-content-start gap-2 w-auto"
     >
-      <p-toggleButton
-        [(ngModel)]="videoTrack"
-        offLabel="Bắt đầu xem"
-        onLabel="Không xem"
-        offIcon="fa-solid fa-video"
-        onIcon="fa-solid fa-video-slash"
-      ></p-toggleButton>
       <p-button
         *ngIf="!isPinned"
         label="Ghim"
@@ -47,12 +40,6 @@
         class="p-button-info w-full"
         (onClick)="unPinU()"
       ></p-button>
-      <p-toggleButton
-        offLabel="Bật mic"
-        onLabel="Tắt mic"
-        offIcon="fa-solid fa-microphone"
-        onIcon="fa-solid fa-microphone-slash"
-      ></p-toggleButton>
     </div>
   </ng-template>
 </p-overlayPanel>
