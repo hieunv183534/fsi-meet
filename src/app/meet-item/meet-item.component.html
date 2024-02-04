@@ -1,94 +1,54 @@
 <div class="meet-item-content w-full h-full relative">
-  <div
-    [ngClass]="{
+  <div [ngClass]="{
       'no-video w-full h-full flex align-items-center justify-content-center': true,
-      'd-none': videoTrack
-    }"
-    class=""
-  >
-    <p-avatar
-      [image]="userInfo.avatarUrl"
-      size="xlarge"
-      shape="circle"
-    ></p-avatar>
+      'd-none': videoTrack && videoPlaying
+    }" class="">
+    <p-avatar [image]="userInfo.avatarUrl" size="xlarge" shape="circle"></p-avatar>
   </div>
-  <div
-    [ngClass]="{
+  <div [ngClass]="{
       'video w-full h-full': true,
-      'd-none': !videoTrack
-    }"
-    [id]="uid"
-  ></div>
+      'd-none': !videoTrack || !videoPlaying
+    }" [id]="uid"></div>
 
-  <i
-    *ngIf="!audioTrack"
-    class="fa-solid fa-microphone-slash absolute"
-    style="top: 10px; right: 10px; color: #fff"
-  ></i>
-  <i
-    *ngIf="audioTrack"
-    class="fa-solid fa-microphone absolute"
-    style="top: 10px; right: 10px; color: #fff"
-  ></i>
+  <i *ngIf="!audioTrack" class="fa-solid fa-microphone-slash absolute" style="top: 10px; right: 10px; color: #fff"></i>
+  <i *ngIf="audioTrack" class="fa-solid fa-microphone absolute" style="top: 10px; right: 10px; color: #fff"></i>
+
+  <i *ngIf="audioTrack && !audioPlaying" class="fa-solid fa-volume-xmark absolute" style="top: 10px; right: 30px; color: #fff"></i>
+  <i *ngIf="audioTrack && audioPlaying" class="fa-solid fa-volume-high absolute" style="top: 10px; right: 30px; color: #fff"></i>
 
   <p class="absolute" style="color: #fff; bottom: 10px; left: 10px; margin: 0">
-    {{ userInfo.name }} &nbsp;
-    <i *ngIf="isSceenShare" class="pi pi-desktop" style='font-size: 12px;'></i>
+    <ng-container *ngIf="isSceenShare">
+      <i class="pi pi-desktop" style="font-size: 12px"></i>&nbsp;
+    </ng-container>
+    {{ userInfo.name }}
   </p>
 
-  <span
-    class="meet-item-tool absolute align-items-center justify-content-center gap-1"
-  >
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="fa-solid fa-thumbtack"
-      class="p-button-rounded p-button-secondary p-button-text"
-      style="color: #fff"
-      (click)="pinUser()"
-    ></button>
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="fa-solid fa-microphone"
-      class="p-button-rounded p-button-secondary p-button-text"
-      style="color: #fff"
-      *ngIf="!audioTrack"
-    ></button>
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="fa-solid fa-microphone-slash"
-      class="p-button-rounded p-button-secondary p-button-text"
-      style="color: #fff"
-      *ngIf="audioTrack"
-    ></button>
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="pi pi-ellipsis-v"
-      class="p-button-rounded p-button-secondary p-button-text"
-      style="color: #fff"
-      (click)="op.toggle($event)"
-    ></button>
+  <span class="meet-item-tool absolute align-items-center justify-content-center gap-1">
+    <button pButton pRipple type="button" icon="fa-solid fa-thumbtack"
+      class="p-button-rounded p-button-secondary p-button-text" style="color: #fff" (click)="pinUser()"></button>
+    <ng-container *ngIf="audioTrack">
+      <button pButton pRipple type="button" icon="fa-solid fa-volume-high"
+        class="p-button-rounded p-button-secondary p-button-text" style="color: #fff" *ngIf="!audioPlaying"
+        (click)="clickOnAudio()"></button>
+      <button pButton pRipple type="button" icon="fa-solid fa-volume-xmark"
+        class="p-button-rounded p-button-secondary p-button-text" style="color: #fff" *ngIf="audioPlaying"
+        (click)="clickOffAudio()"></button>
+    </ng-container>
+    <button pButton pRipple type="button" icon="pi pi-ellipsis-v"
+      class="p-button-rounded p-button-secondary p-button-text" style="color: #fff"
+      (click)="op.toggle($event)"></button>
   </span>
 
   <p-overlayPanel #op>
     <ng-template pTemplate>
-      <div
-        class="flex flex-column align-items-start justify-content-start gap-1 w-auto"
-      >
-        <p-toggleButton
-          [(ngModel)]="videoTrack"
-          offLabel="Bắt đầu xem"
-          onLabel="Không xem"
-          offIcon="fa-solid fa-video"
-          onIcon="fa-solid fa-video-slash"
-        ></p-toggleButton>
+      <div class="flex flex-column align-items-start justify-content-start gap-1 w-auto">
+        <ng-container *ngIf="videoTrack">
+          <p-button *ngIf="videoPlaying" label="Không xem" icon="fa-solid fa-video-slash" class="p-button-info w-full"
+            (onClick)="clickOffVideo()"></p-button>
+
+          <p-button *ngIf="!videoPlaying" label="Bắt đầu xem" icon="fa-solid fa-video" class="p-button-info w-full"
+            (onClick)="clickOnVideo()"></p-button>
+        </ng-container>
       </div>
     </ng-template>
   </p-overlayPanel>
