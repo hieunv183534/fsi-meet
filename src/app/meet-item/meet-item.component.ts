@@ -13,7 +13,16 @@ export class MeetItemComponent implements OnInit, OnChanges {
 
   @Input() isSceenShare: boolean = false;
 
+  @Input() videoPlaying?: boolean = false;
+  @Input() audioPlaying?: boolean = false;
+
   @Output() pin: EventEmitter<any> = new EventEmitter();
+
+  @Output() onVideo: EventEmitter<any> = new EventEmitter();
+  @Output() offVideo: EventEmitter<any> = new EventEmitter();
+
+  @Output() onAudio: EventEmitter<any> = new EventEmitter();
+  @Output() offAudio: EventEmitter<any> = new EventEmitter();
 
   userInfo: any;
 
@@ -27,12 +36,22 @@ export class MeetItemComponent implements OnInit, OnChanges {
     if (changes['videoTrack']?.currentValue) {
       setTimeout(() => {
         this.videoTrack.play(this.uid);
+        this.onVideo.emit(this.uid);
       }, 100);
     }
 
     if (changes['audioTrack']?.currentValue) {
       this.audioTrack.play();
+      this.onAudio.emit(this.uid);
     }
+
+    // if(changes['videoPlaying']?.currentValue){
+
+    // }
+
+    // if(changes['audioPlaying']?.currentValue){
+
+    // }
   }
 
   ngOnInit() {
@@ -46,6 +65,22 @@ export class MeetItemComponent implements OnInit, OnChanges {
 
   pinUser() {
     this.pin.emit({ uid: this.uid, userName: this.userInfo.name, avatarUrl: this.userInfo.avatarUrl });
+  }
+
+  clickOnVideo() {
+    this.onVideo.emit(this.uid);
+  }
+
+  clickOffVideo() {
+    this.offVideo.emit(this.uid);
+  }
+
+  clickOnAudio() {
+    this.onAudio.emit(this.uid);
+  }
+
+  clickOffAudio() {
+    this.offAudio.emit(this.uid);
   }
 
 }

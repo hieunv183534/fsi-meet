@@ -60,14 +60,17 @@ export class AppComponent implements OnInit {
     videoTrack?: any,
     audioTrack?: any,
     isScreenShare: boolean,
-    videoPlaying?: boolean
+    videoPlaying?: boolean,
+    audioPlaying?: boolean
   }[] = [];
 
   pinParam?: {
     uid: any,
     videoTrack?: any,
     audioTrack?: any,
-    isScreenShare: boolean
+    isScreenShare: boolean,
+    videoPlaying?: boolean,
+    audioPlaying?: boolean
   };
 
   invitedUserIds: string[] = [];
@@ -175,6 +178,11 @@ export class AppComponent implements OnInit {
 
     this.agoraEngine.on('user-left', (user: any) => {
       this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+      if (this.pinParam?.uid == user.uid) {
+        this.pinParam = undefined;
+        this.pinAvararUrl = "";
+        this.pinUserName = "";
+      }
       if (!user.uid.includes("screen")) {
         this.invitedUserIds.push(user.uid);
       }
@@ -190,7 +198,8 @@ export class AppComponent implements OnInit {
             if (!oldScreen) {
               this.remoteParams.push({
                 uid: user.uid,
-                isScreenShare: true
+                isScreenShare: true,
+                videoPlaying: true
               });
             }
             setTimeout(() => {
@@ -198,13 +207,24 @@ export class AppComponent implements OnInit {
             }, 100);
           }
         } else {
-          let userParam = this.remoteParams.find(x => x.uid == user.uid);
-          userParam!.videoTrack = user.videoTrack;
+          if (this.pinParam?.uid == user.uid) {
+            this.pinParam!.videoTrack = user.videoTrack;
+            this.pinParam!.videoPlaying = true;
+            this.pinParam?.videoTrack.play("pinMeet", { fit: "contain" });
+          } else {
+            let userParam = this.remoteParams.find(x => x.uid == user.uid);
+            userParam!.videoTrack = user.videoTrack;
+            // userParam!.videoPlaying = true;
+          }
         }
       }
       if (mediaType == "audio") {
-        let param = this.remoteParams.find(x => x.uid == user.uid);
-        param!.audioTrack = user.audioTrack;
+        if (this.pinParam?.uid == user.uid) {
+          this.pinParam!.audioTrack = user.audioTrack;
+        } else {
+          let param = this.remoteParams.find(x => x.uid == user.uid);
+          param!.audioTrack = user.audioTrack;
+        }
       }
     });
 
@@ -212,13 +232,27 @@ export class AppComponent implements OnInit {
       let param = this.remoteParams.find(x => x.uid == user.uid);
       if (mediaType == "video") {
         if (user.uid.includes('screen')) {
-          this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+          if (this.pinParam?.uid == user.uid) {
+            this.pinParam = undefined;
+            this.pinAvararUrl = "";
+            this.pinUserName = "";
+          } else {
+            this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+          }
         } else {
-          param!.videoTrack = null;
+          if (this.pinParam?.uid == user.uid) {
+            this.pinParam!.videoTrack = null;
+          } else {
+            param!.videoTrack = null;
+          }
         }
       } else {
-        let param = this.remoteParams.find(x => x.uid == user.uid);
-        param!.audioTrack = null;
+        if (this.pinParam?.uid == user.uid) {
+          this.pinParam!.audioTrack = null;
+        } else {
+          let param = this.remoteParams.find(x => x.uid == user.uid);
+          param!.audioTrack = null;
+        }
       }
     });
 
@@ -317,22 +351,87 @@ export class AppComponent implements OnInit {
     this.pinAvararUrl = pin.avatarUrl;
     if (this.pinParam?.uid) {
       this.remoteParams.push(this.pinParam);
+      if (this.pinParam?.audioTrack && !this.pinParam?.audioPlaying) {
+        let uid = this.pinParam?.uid;
+        setTimeout(() => {
+          this.offAudio(uid);
+        }, 130);
+      }
+      if (this.pinParam?.videoTrack && !this.pinParam?.videoPlaying) {
+        let uid = this.pinParam?.uid;
+        setTimeout(() => {
+          this.offVideo(uid);
+        }, 130);
+      }
     }
     let pinUser = this.remoteParams.find(x => x.uid == pin.uid);
     this.pinParam = pinUser;
     this.remoteParams = this.remoteParams.filter(x => x.uid != pin.uid);
-    if (this.pinParam?.videoTrack) {
+    if (this.pinParam?.videoTrack?.isPlaying) {
       this.pinParam.videoTrack.play("pinMeet", { fit: "contain" });
     }
   }
 
 
   unPinUser() {
-    if (this.pinParam?.uid)
+    if (this.pinParam?.uid) {
       this.remoteParams.push(this.pinParam);
+      if (this.pinParam?.audioTrack && !this.pinParam?.audioPlaying) {
+        let uid = this.pinParam?.uid;
+        setTimeout(() => {
+          this.offAudio(uid);
+        }, 130);
+      }
+      if (this.pinParam?.videoTrack && !this.pinParam?.videoPlaying) {
+        let uid = this.pinParam?.uid;
+        setTimeout(() => {
+          this.offVideo(uid);
+        }, 130);
+      }
+    }
     this.pinParam = undefined;
     this.pinAvararUrl = "";
     this.pinUserName = "";
+  }
+
+  onVideo(uid: string) {
+    let remote = this.remoteParams.find(x => x.uid == uid);
+    remote!.videoPlaying = true;
+  }
+
+  offVideo(uid: string) {
+    let remote = this.remoteParams.find(x => x.uid == uid);
+    remote!.videoPlaying = false;
+  }
+
+  onAudio(uid: string) {
+    let remote = this.remoteParams.find(x => x.uid == uid);
+    remote!.audioPlaying = true;
+    remote?.audioTrack.play();
+  }
+
+  offAudio(uid: string) {
+    let remote = this.remoteParams.find(x => x.uid == uid);
+    remote!.audioPlaying = false;
+    remote?.audioTrack.stop();
+  }
+
+  onVideoPin() {
+    this.pinParam!.videoPlaying = true;
+  }
+
+  offVideoPin() {
+    this.pinParam!.videoPlaying = false;
+  }
+
+  onAudioPin() {
+    this.pinParam!.audioPlaying = true;
+    this.pinParam!.audioTrack.play();
+  }
+
+  offAudioPin() {
+    this.pinParam!.audioPlaying = false;
+    this.pinParam!.audioTrack.stop();
   }
 
   decodedAccessToken(authToken: any): any {
