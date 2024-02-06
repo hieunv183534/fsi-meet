@@ -2,6 +2,8 @@ import { Component, Inject, Injector, OnInit, Renderer2, ViewEncapsulation } fro
 import { TimeService } from './time.service';
 import axios from 'axios';
 import AgoraRTC from "agora-rtc-sdk-ng";
+AgoraRTC.disableLogUpload();
+AgoraRTC.setLogLevel(4);
 import jwt_decode from 'jwt-decode';
 import { DOCUMENT } from '@angular/common';
 import * as signalR from '@microsoft/signalr';
@@ -57,7 +59,8 @@ export class AppComponent implements OnInit {
     uid: any,
     videoTrack?: any,
     audioTrack?: any,
-    isScreenShare: boolean
+    isScreenShare: boolean,
+    videoPlaying?: boolean
   }[] = [];
 
   pinParam?: {
@@ -66,6 +69,8 @@ export class AppComponent implements OnInit {
     audioTrack?: any,
     isScreenShare: boolean
   };
+
+  invitedUserIds: string[] = [];
 
   connection!: signalR.HubConnection;
 
@@ -84,7 +89,6 @@ export class AppComponent implements OnInit {
     const chanel = urlParams.get('chanel');
     this.decodedAccessToken(authToken);
     this.options.channel = chanel;
-    this.getRTCToken(authToken, chanel);
     this.getUsersInConversation(authToken, chanel);
   }
   initSignal() {
@@ -119,6 +123,9 @@ export class AppComponent implements OnInit {
       }
     }).then(res => {
       localStorage.setItem("users", JSON.stringify(res.data.map((x: any) => x.user)));
+      this.invitedUserIds = res.data.map((x: any) => x.user.id);
+      this.invitedUserIds = this.invitedUserIds.filter(x => x != this.thisUser.nameid);
+      this.getRTCToken(authToken, chanel);
     })
   }
 
@@ -161,12 +168,16 @@ export class AppComponent implements OnInit {
             uid: user.uid,
             isScreenShare: false
           });
+          this.invitedUserIds = this.invitedUserIds.filter(x => x != user.uid);
         }
       }
     });
 
     this.agoraEngine.on('user-left', (user: any) => {
       this.remoteParams = this.remoteParams.filter(x => x.uid != user.uid);
+      if (!user.uid.includes("screen")) {
+        this.invitedUserIds.push(user.uid);
+      }
     });
 
 
@@ -192,7 +203,6 @@ export class AppComponent implements OnInit {
         }
       }
       if (mediaType == "audio") {
-        debugger;
         let param = this.remoteParams.find(x => x.uid == user.uid);
         param!.audioTrack = user.audioTrack;
       }
@@ -217,7 +227,6 @@ export class AppComponent implements OnInit {
       let remoteUsers = this.agoraEngine.remoteUsers;
       remoteUsers.forEach(async (remoteUser: any) => {
         if (!remoteUser.uid.includes(this.thisUser.nameid)) {
-          console.log("hieunv183534 " + remoteUser.uid);
           if (remoteUser.uid.includes("screen")) {
             if (remoteUser.hasVideo) {
               let oldRemoteUser = this.remoteParams.find(x => x.uid == remoteUser.uid);
@@ -238,6 +247,7 @@ export class AppComponent implements OnInit {
                 isScreenShare: false,
                 uid: remoteUser.uid
               });
+              this.invitedUserIds = this.invitedUserIds.filter(x => x != remoteUser.uid);
             }
 
             if (remoteUser.hasVideo) {
