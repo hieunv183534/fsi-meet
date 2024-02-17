@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation, Injectable } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation, Injectable, Input, SimpleChanges } from '@angular/core';
 import AgoraRTC, { IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
 import { MenuItem } from 'primeng/api';
 
@@ -32,6 +32,7 @@ export class PreviewMeetComponent implements OnInit {
   audioTrack!: IMicrophoneAudioTrack;
   speakerTrack!: IMicrophoneAudioTrack;
 
+  @Input() isShowPreview: any
   @Output() cameraId = new EventEmitter<string>();
   @Output() speakerId = new EventEmitter<string>();
   @Output() microphoneId = new EventEmitter<string>();
@@ -47,18 +48,27 @@ export class PreviewMeetComponent implements OnInit {
     // if (this.audioTrack) {
     //   this.audioTrack.close();
     // }
-  
+
     // // Tạo một IAudioTrack từ một file âm thanh
     // this.audioTrack = await AgoraRTC.createBufferSourceAudioTrack({ source: audioFilePath });
-  
+
     // // Đặt đầu ra âm thanh của audioTrack thành loa với speakerId được chỉ định
     // await this.audioTrack.setPlaybackDevice(speakerId);
-  
+
     // // Phát audioTrack
     // this.audioTrack.play();
   }
-  
-  
+
+  // ngOnChanges(changes: SimpleChanges) {
+  //   // if (changes['isShowPreview']) { // Sửa ở đây
+  //   const isShowPreviewValue = changes['isShowPreview'].currentValue; // Sửa ở đây
+  //   debugger
+  //   if (isShowPreviewValue !== true){
+  //     // this.audioTrack.play();
+  //     debugger
+  //   }
+  //   // }
+  // }
   async startPreviewMic(id: string) {
     this.isCheckMic = true
     if (this.audioTrack) {

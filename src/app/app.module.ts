@@ -22,6 +22,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { TabMenuModule } from 'primeng/tabmenu';
 import {TabViewModule} from 'primeng/tabview';
+import {RippleModule} from 'primeng/ripple';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +33,7 @@ import {TabViewModule} from 'primeng/tabview';
   ],
   imports: [
     BrowserModule,
+    RippleModule,
     TabViewModule,
     TabMenuModule,
     DropdownModule,

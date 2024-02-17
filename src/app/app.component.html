@@ -8,9 +8,9 @@
         <div class="list-meet-item">
           <ng-container *ngFor="let param of remoteParams">
             <app-meet-item [uid]="param.uid" [isSceenShare]="param.isScreenShare" [audioTrack]="param.audioTrack"
-              [videoTrack]="param.videoTrack" [videoPlaying]="param.videoPlaying" [audioPlaying]="param.audioPlaying"
-              (pin)="pin($event)" (onVideo)="onVideo($event)" (offVideo)="offVideo($event)" (onAudio)="onAudio($event)"
-              (offAudio)="offAudio($event)"></app-meet-item>
+              [isOnMic]="param.isOnMic" [videoTrack]="param.videoTrack" [videoPlaying]="param.videoPlaying"
+              [audioPlaying]="param.audioPlaying" (pin)="pin($event)" (onVideo)="onVideo($event)"
+              (offVideo)="offVideo($event)" (onAudio)="onAudio($event)" (offAudio)="offAudio($event)"></app-meet-item>
           </ng-container>
         </div>
       </div>
@@ -20,7 +20,19 @@
               'no-video w-full h-full flex align-items-center justify-content-center absolute': true,
               'd-none': pinParam?.videoTrack &&  pinParam?.videoPlaying
             }">
-            <p-avatar [image]="pinAvararUrl ?? ''" size="xlarge" shape="circle" style="transform: scale(3)"></p-avatar>
+            <!-- 
+              <p-avatar [image]="pinAvararUrl ?? ''" size="xlarge" shape="circle" style="transform: scale(3)" class="z-1 h-full w-full">
+              </p-avatar> -->
+            <img *ngIf="pinAvararUrl" [src]="pinAvararUrl" class="w-10rem h-10rem border-circle z-1" style="object-fit: contain;">
+
+          </div>
+          <div *ngIf="pinParam?.isOnMic" class="w-full h-full flex align-items-center justify-content-center absolute">
+            <div class="absolute border-gray-700 h-16rem w-16rem  border-circle ping" style="border: 16px solid;">
+            </div>
+            <div class="absolute border-gray-600  h-14rem w-14rem  border-circle ping" style="border: 16px solid;">
+            </div>
+            <div class="absolute border-gray-500 h-12rem w-12rem  border-circle ping" style="border: 16px solid; ">
+            </div>
           </div>
           <div [ngClass]="{
             'w-full h-full absolute' : true,
@@ -28,7 +40,7 @@
           }" id="pinMeet"></div>
           <i *ngIf="pinParam?.uid && !pinParam?.audioTrack" class="fa-solid fa-microphone-slash absolute"
             style="top: 10px; right: 10px; color: #fff"></i>
-          <i *ngIf="pinParam?.uid && pinParam?.audioTrack" class="fa-solid fa-microphone absolute"
+          <i *ngIf="pinParam?.uid && pinParam?.audioTrack" class="fa-solid fa-microphone absolute" [ngClass]="{'text-primary': pinParam?.isOnMic}"
             style="top: 10px; right: 10px; color: #fff"></i>
           <i *ngIf="pinParam?.uid && pinParam?.audioTrack && !pinParam?.audioPlaying"
             class="fa-solid fa-volume-xmark absolute" style="top: 10px; right: 30px; color: #fff"></i>
@@ -163,11 +175,14 @@
     </div>
   </div>
   <ng-container *ngIf="isShowPreview">
-    <p-dialog [resizable]="true" header="Cài đặt" (onHide)="isShowPreview=false"
+    <p-dialog [resizable]="true" header="Cài đặt" [closable]="false" [closeOnEscape]="false"
       [breakpoints]="{'1500px': '60vw','1380px': '60vw','1080px': '70vw','960px': '75vw', '640px': '100vw'}"
       [(visible)]="isShowPreview" [modal]="true" [style]="{width: '40vw',height:'auto'}">
-      <app-preview-meet (cameraId)="changeCamera($event)" (microphoneId)="changeMicrophone($event)"
-        (speakerId)="changeSpeaker($event)"></app-preview-meet>
+      <app-preview-meet [isShowPreview]="isShowPreview" (cameraId)="changeCamera($event)"
+        (microphoneId)="changeMicrophone($event)" (speakerId)="changeSpeaker($event)"></app-preview-meet>
+      <ng-template pTemplate="footer">
+        <button class="p-button-sm" pButton type="button" (click)="onHide()">Kiểm tra</button>
+      </ng-template>
     </p-dialog>
   </ng-container>
 

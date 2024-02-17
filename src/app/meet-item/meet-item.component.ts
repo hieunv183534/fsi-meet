@@ -11,6 +11,8 @@ export class MeetItemComponent implements OnInit, OnChanges {
   @Input() videoTrack: any = null;
   @Input() audioTrack: any = null;
 
+  @Input() isOnMic?: boolean = false;
+
   @Input() isSceenShare: boolean = false;
 
   @Input() videoPlaying?: boolean = false;

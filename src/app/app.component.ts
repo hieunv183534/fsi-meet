@@ -57,6 +57,7 @@ export class AppComponent implements OnInit {
 
   remoteParams: {
     uid: any,
+    isOnMic?: boolean,
     videoTrack?: any,
     audioTrack?: any,
     isScreenShare: boolean,
@@ -66,6 +67,7 @@ export class AppComponent implements OnInit {
 
   pinParam?: {
     uid: any,
+    isOnMic?: boolean,
     videoTrack?: any,
     audioTrack?: any,
     isScreenShare: boolean,
@@ -94,6 +96,14 @@ export class AppComponent implements OnInit {
     this.options.channel = chanel;
     this.getUsersInConversation(authToken, chanel);
   }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['isShowPreview']) { // Sửa ở đây
+  //     const newValue = changes['isShowPreview'].currentValue; // Sửa ở đây
+  //     console.log('isShowPreview changed to:', newValue);
+  //     debugger
+  //   }
+  // }
+
   initSignal() {
     const urlParams = new URLSearchParams(window.location.search);
     const authToken = urlParams.get('token');
@@ -160,7 +170,22 @@ export class AppComponent implements OnInit {
 
     this.listenRTC();
   }
+  analyzeSound(audioTrack: any, param: any) {
 
+    const updateIcon = () => {
+      requestAnimationFrame(updateIcon);
+      const volume = audioTrack.getVolumeLevel();
+      if (volume > 0.5) {
+        console.log("toto");
+        param.isOnMic = true;
+      }
+      else
+        param.isOnMic = false;
+    };
+    setTimeout(()=>{
+      updateIcon();
+    },10)
+  }
   listenRTC() {
 
     this.agoraEngine.on('user-joined', (user: any) => {
@@ -221,9 +246,12 @@ export class AppComponent implements OnInit {
       if (mediaType == "audio") {
         if (this.pinParam?.uid == user.uid) {
           this.pinParam!.audioTrack = user.audioTrack;
+          this.analyzeSound(user.audioTrack, this.pinParam)
+
         } else {
           let param = this.remoteParams.find(x => x.uid == user.uid);
           param!.audioTrack = user.audioTrack;
+          this.analyzeSound(user.audioTrack, param)
         }
       }
     });
@@ -333,7 +361,7 @@ export class AppComponent implements OnInit {
 
   // audio
   async shareVoice() {
-    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({microphoneId: this.micDeviceId ? this.micDeviceId : 'default'});
+    this.localParam.audioTrack = await AgoraRTC.createMicrophoneAudioTrack({ microphoneId: this.micDeviceId ? this.micDeviceId : 'default' });
     await this.agoraEngine.publish([this.localParam.audioTrack]);
     this.isMicroOn = true;
   }
@@ -475,6 +503,14 @@ export class AppComponent implements OnInit {
     this.micDeviceId = id
   }
   async changeSpeaker(speakerId: string) {
-      debugger
+    debugger
+  }
+  onHide() {
+    // this.localParam!.audioTrack.stop()
+    // if (this.localParam!.audioTrack)
+    //   this.localParam!.audioTrack.stop()
+    this.isShowPreview = false;
+    // console.log('isShowPreview value when onHide is triggered:', this.isShowPreview);
+    // Additional logic or actions you want to perform when onHide occurs
   }
 }
